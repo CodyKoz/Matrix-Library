@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct dynamic_Array
+struct dynamic_array
 {
     int size;
     int capacity;
@@ -17,7 +17,7 @@ struct header_array
     struct dynamic_array* data;
 };
 
-enum Major {
+enum orientation {
     ROW,
     COL
 };
@@ -33,11 +33,19 @@ enum Major {
  *   
  * 
 */
-int Matrix_Init (int rows, int cols, enum Major dir) {
+int Matrix_Init (int rows, int cols, enum orientation orient) {
     //initialize a header array
-    
-    //populate the header array with dynamic arrays (these will house the contents of the matrix)
+    struct header_array* headptr = malloc(sizeof(void*)*rows);
+    headptr->capacity = rows;
+    printf("headptr address: %p \n", &headptr);
 
+    
+    for(int x = 0; x < headptr->capacity; x++) {
+        
+    };
+
+    //populate the header array with dynamic arrays (these will house the contents of the matrix)
+    
     
 
 }
@@ -47,7 +55,7 @@ int Matrix_Init (int rows, int cols, enum Major dir) {
 
 int main() {
     //test data will go here
-    enum Major Row_Maj = ROW;
-
+    enum orientation orient = ROW;
+    Matrix_Init(4,4,orient);
 
 }
