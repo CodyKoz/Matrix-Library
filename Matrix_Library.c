@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 struct dynamic_array
 {
     int size;
@@ -22,6 +23,29 @@ enum orientation {
     COL
 };
 
+
+/**
+ * 
+ * Checks the inputs given for matrix dimensions, and makes sure they are positive numbers.
+ * 
+ * Inputs:  rows - number of desired rows for matrix.
+ *          cols - number of desired columns for matrix.
+ * 
+ * Outputs: returns 0 if either imput is invalid. otherwise returns 1 if inputs are valid.
+ * 
+*/
+int check_matrix_dimensions(int rows, int cols) {
+    if(rows < 0 || cols < 0) {
+        printf("Error: negative numbers are not valid inputs. please try again");
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
+
+
+
 /**
  * Initialize a Matrix with the number of rows and columns taken as arguments.
  * 
@@ -33,12 +57,7 @@ enum orientation {
  * 
 */
 struct header_array* Matrix_Init (int rows, int cols, enum orientation orient) {
-    
-    if(rows < 0 || cols < 0) {
-        printf("Error: negative numbers are not valid inputs. please try again");
-    }
-    
-    
+
     //initialize a header array
     if(orient == ROW) {
         struct header_array* head_ptr = (struct header_array*)malloc(sizeof(void*)*rows);
@@ -127,7 +146,7 @@ int get_columns(struct header_array* head_ptr, enum orientation orient) {
 int main() {
     //test data will go here
     enum orientation orient = ROW;
-    struct header_array* head_ptr = Matrix_Init(5,-3,orient);
+    struct header_array* head_ptr = Matrix_Init(5,3,orient);
     get_rows(head_ptr, orient);
     get_columns(head_ptr, orient);
 
