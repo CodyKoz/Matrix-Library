@@ -4,4 +4,6 @@ struct header_array;
 
 enum Major;
 
-int matrix_init();
+int check_matrix_dimensions();
+
+struct header_array* matrix_init();

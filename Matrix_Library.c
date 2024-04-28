@@ -24,27 +24,6 @@ enum orientation {
 };
 
 
-/**
- * 
- * Checks the inputs given for matrix dimensions, and makes sure they are positive numbers.
- * 
- * Inputs:  rows - number of desired rows for matrix.
- *          cols - number of desired columns for matrix.
- * 
- * Outputs: returns 0 if either imput is invalid. otherwise returns 1 if inputs are valid.
- * 
-*/
-int check_matrix_dimensions(int rows, int cols) {
-    if(rows < 0 || cols < 0) {
-        printf("Error: negative numbers are not valid inputs. please try again");
-        return 0;
-    }
-    else {
-        return 1;
-    }
-}
-
-
 
 /**
  * Initialize a Matrix with the number of rows and columns taken as arguments.
@@ -56,10 +35,23 @@ int check_matrix_dimensions(int rows, int cols) {
  * outputs: returns a matrix with the input dimension.
  * 
 */
-struct header_array* Matrix_Init (int rows, int cols, enum orientation orient) {
+void* Matrix_Init (int rows, int cols, enum orientation orient) {
+
+    //error handling for negative matrix dimensions. will set temp to 0 if either dimension is negative, or set temp to 1 if dimensions are in-bounds.
+    int temp;
+    if(rows < 0 || cols < 0) {
+        printf("Error: negative numbers are not valid matrix dimensions. please try again.\n");
+        temp = 0;
+        void* neg_dim = NULL;
+        return neg_dim;
+        
+    }
+    else {
+        temp = 1;
+    }
 
     //initialize a header array
-    if(orient == ROW) {
+    if(orient == ROW && temp == 1) {
         struct header_array* head_ptr = (struct header_array*)malloc(sizeof(void*)*rows);
         head_ptr->capacity = rows;
         printf("headptr address: %p \n", &head_ptr);
@@ -78,7 +70,7 @@ struct header_array* Matrix_Init (int rows, int cols, enum orientation orient) {
         return head_ptr;
 
     }
-    else {
+    else if(orient == COL && temp == 1) {
 
         struct header_array* head_ptr = (struct header_array*)malloc(sizeof(void*)*cols);
         head_ptr->capacity = cols;
@@ -98,12 +90,14 @@ struct header_array* Matrix_Init (int rows, int cols, enum orientation orient) {
         return head_ptr;
 
     }
+
+    
 }
 
 
 /**
  * 
- * Will return the number of rows in a given matrix.
+ * checks if a matrix exists, then returns the number of rows in a given matrix if it does.
  * 
  * inputs:  head_ptr - the pointer to the header array of the matrix.
  *          orient   - whether the matrix is oriented row or column major.
@@ -112,19 +106,24 @@ struct header_array* Matrix_Init (int rows, int cols, enum orientation orient) {
  * 
 */
 int get_rows(struct header_array* head_ptr, enum orientation orient) {
-
-    if(orient == ROW) {
-        printf("number of rows: %d\n", head_ptr->capacity);
+    if(head_ptr == NULL){
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        return 0;
     }
     else {
-        printf("number of rows: %d\n", head_ptr->data[0]->capacity);
+        if(orient == ROW) {
+            printf("number of rows: %d\n", head_ptr->capacity);
+        }
+        else {
+            printf("number of rows: %d\n", head_ptr->data[0]->capacity);
+        }
+        return 1;
     }
-    return 0;
 }
 
 /**
  * 
- * Will return the number of columns in a given matrix.
+ * Checks if a matrix exists, then returns the number of columns in a given matrix if it does.
  * 
  * inputs:  head_ptr - the pointer to the header array of the matrix.
  *          orient   - whether the matrix is oriented row or column major.
@@ -134,19 +133,25 @@ int get_rows(struct header_array* head_ptr, enum orientation orient) {
 */
 int get_columns(struct header_array* head_ptr, enum orientation orient) {
 
-    if(orient == ROW) {
+    if(head_ptr == NULL){
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        return 0;
+    }
+    else {
+        if(orient == ROW) {
         printf("number of columns: %d\n", head_ptr->data[0]->capacity);
     }
     else {
         printf("number of columns: %d\n", head_ptr->capacity);
     }
-    return 0;
+    return 1;
+    }
 }
 
 int main() {
     //test data will go here
     enum orientation orient = ROW;
-    struct header_array* head_ptr = Matrix_Init(5,3,orient);
+    struct header_array* head_ptr = Matrix_Init(-5,3,orient);
     get_rows(head_ptr, orient);
     get_columns(head_ptr, orient);
 
