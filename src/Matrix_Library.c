@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <Matrix_Library.h>
+
 
 
 struct dynamic_array
@@ -13,6 +15,9 @@ struct header_array
 {
     int size;
     int capacity;
+
+    //orient stores the orientation of the matrix. will determine how the matrix is iterated through in other functions
+    enum orientation orient;
 
     //'data' will store a pointer to a dynamic array, which is defined above.
     struct dynamic_array* data[];
@@ -30,39 +35,36 @@ enum orientation {
  * 
  * Inputs:  Rows - number of rows.
  *          Cols - number of cols.
- *          dir  - whether the matrix will be traversable in row or column major format.
+ *          orient  - whether the matrix will be traversable in row or column major format.
  * 
- * outputs: returns a matrix with the input dimension.
+ * outputs: returns a matrix with the input dimensions and orientation
  * 
 */
-void* Matrix_Init (int rows, int cols, enum orientation orient) {
+void* matrix_init (int rows, int cols, enum orientation orient) {
 
     //error handling: check for negative matrix dimensions. will set temp to 0 if either dimension is negative, or set temp to 1 if dimensions are in-bounds.
-    int temp;
     if(rows < 0 || cols < 0) {
         printf("Error: negative numbers are not valid matrix dimensions. please try again.\n");
-        temp = 0;
         void* neg_dim = NULL;
         return neg_dim;
-        
     }
     
     //error handling: check for non-integer dimensions. will set temp to 0 if either dimension is a whole number, or set temp to 1 if dimensions are in-bounds.
-    else if(rows % 1 == 0 || cols % 1 == 0) {
+    //'rows' and 'cols' are casted implicitly to an integer by the function parameters, and will use the whole number part of the input value.
+    //this block of code exists to handle any potiential non-integer value errors caused by the implicit cast. 
+    else if(rows % 1 != 0 || cols % 1 != 0) {
         printf("Error: non-integer numbers are not valid matrix dimensions. please try again.\n");
-        temp = 0;
         void* neg_dim = NULL;
         return neg_dim;
         
     }
-    else {
-        temp = 1;
-    }
 
     //initialize a header array
-    if(orient == ROW && temp == 1) {
+    if(orient == ROW) {
         struct header_array* head_ptr = (struct header_array*)malloc(sizeof(void*)*rows);
         head_ptr->capacity = rows;
+        head_ptr->orient = orient;
+        
         //printf("headptr address: %p \n", &head_ptr);
 
         //populate the header array with dynamic arrays (these will house the contents of the matrix)
@@ -79,10 +81,11 @@ void* Matrix_Init (int rows, int cols, enum orientation orient) {
         return head_ptr;
 
     }
-    else if(orient == COL && temp == 1) {
+    else if(orient == COL) {
 
         struct header_array* head_ptr = (struct header_array*)malloc(sizeof(void*)*cols);
         head_ptr->capacity = cols;
+        head_ptr->orient = orient;
         //printf("headptr address: %p \n", &head_ptr);
 
         //populate the header array with dynamic arrays (these will house the contents of the matrix)
@@ -103,6 +106,20 @@ void* Matrix_Init (int rows, int cols, enum orientation orient) {
     
 }
 
+/**
+ * 
+ * this method will be called when user is done using the matrix. it will free any memory allocated for the input matrix.
+ * 
+ * Inputs:  head_ptr - the pointer to the header array of the matrix.
+ *          orient   - the orientation of the matrix. this matters for determining the order in which memory is freed.
+ * 
+ * Outputs: returns 1 upon success, or 0 upon failure.
+ * 
+*/
+int free_matrix (struct header_array* head_ptr, enum orientation orient) {
+
+}
+
 
 /**
  * 
@@ -112,21 +129,25 @@ void* Matrix_Init (int rows, int cols, enum orientation orient) {
  *          orient   - whether the matrix is oriented row or column major.
  * 
  * outputs: returns an integer with the number of rows in the given matrix.
+ *          returns NULL if unsuccessful.
  * 
 */
-int get_rows(struct header_array* head_ptr, enum orientation orient) {
+int get_rows(struct header_array* head_ptr) {
     if(head_ptr == NULL){
         printf("Error: matrix does not exist. please create a matrix and try again.\n");
-        return 0;
+        return NULL;
     }
     else {
-        if(orient == ROW) {
-            printf("number of rows: %d\n", head_ptr->capacity);
+        if(head_ptr->orient == ROW) {
+            int num_of_rows = head_ptr->capacity;
+            printf("number of rows: %d\n", num_of_rows);
+            return num_of_rows;
         }
         else {
-            printf("number of rows: %d\n", head_ptr->data[0]->capacity);
+            int num_of_rows = head_ptr->data[0]->capacity;
+            printf("number of rows: %d\n", num_of_rows);
+            return num_of_rows;
         }
-        return 1;
     }
 }
 
@@ -138,22 +159,27 @@ int get_rows(struct header_array* head_ptr, enum orientation orient) {
  *          orient   - whether the matrix is oriented row or column major.
  * 
  * outputs: returns an integer with the number of columns in the given matrix.
+ *          returns NULL if unsuccessful.
  * 
 */
-int get_columns(struct header_array* head_ptr, enum orientation orient) {
+int get_columns(struct header_array* head_ptr) {
 
     if(head_ptr == NULL){
         printf("Error: matrix does not exist. please create a matrix and try again.\n");
-        return 0;
+        return NULL;
     }
     else {
-        if(orient == ROW) {
-        printf("number of columns: %d\n", head_ptr->data[0]->capacity);
-    }
-    else {
-        printf("number of columns: %d\n", head_ptr->capacity);
-    }
-    return 1;
+        if(head_ptr->orient == ROW) {
+            int num_of_cols = head_ptr->data[0]->capacity;
+            printf("number of columns: %d\n", num_of_cols);
+            return num_of_cols;
+        }
+        else {
+            int num_of_cols = head_ptr->capacity;
+            printf("number of columns: %d\n", num_of_cols);
+            return num_of_cols; 
+        }
+        
     }
 }
 
@@ -165,32 +191,33 @@ int get_columns(struct header_array* head_ptr, enum orientation orient) {
  * Inputs:  head_ptr - the pointer to the header array of the matrix.
  *          row      - the row of the desired element.
  *          column   - the column of the desired element.
- *          orient   - the orientation of the matrix.
  * 
  * outputs: - prints the element at the desired location to the console.
- *          - returns 1 for success, and 0 for failure.
+ *          - returns element at desired location upon success, and NULL for failure.
  * 
 */
-int print_element(struct header_array* head_ptr, int row, int column, enum orientation orient) {
+int print_element(struct header_array* head_ptr, int row, int column) {
     
     //outtermost if-else handles differences between row/column major matrices.
     //rows and columns need to be switched in final print statement due to the different orientations.
-    if (orient == ROW) {
+    if (head_ptr->orient == ROW) {
         //error handling: check if matrix exists. will continue function if it does, or return 0 if it does not.
         if(head_ptr == NULL){
             printf("Error: matrix does not exist. please create a matrix and try again.\n");
-            return 0;
+            return NULL;
         }
-
         //error handling: checking that the user-given coordinates are within the bounds of the matrix
         else if(row < 0 || row > head_ptr->capacity || row < 0 || column < 0 || column > head_ptr->data[0]->capacity){
             printf("Error: coordinates provided do not exist within the matrix.\n");
-            return 0;
+            return NULL;
         }
+
+        
         //if matrix exists and coordinates are in-bounds, then function will print desired element to console and return 1.
         else {
-            printf("element at (%d,%d): %d", row, column, head_ptr->data[row]->data[column]);
-            return 1;
+            int elem_to_print = head_ptr->data[row]->data[column];
+            printf("element at (%d,%d): %d", row, column, elem_to_print);
+            return elem_to_print;
         }
 
     }
@@ -198,18 +225,20 @@ int print_element(struct header_array* head_ptr, int row, int column, enum orien
         //error handling: check if matrix exists. will continue function if it does, or return 0 if it does not.
         if(head_ptr == NULL){
             printf("Error: matrix does not exist. please create a matrix and try again.\n");
-            return 0;
+            return NULL;
         }
-
         //error handling: checking that the user-given coordinates are within the bounds of the matrix
         else if(row < 0 || row > head_ptr->capacity || row < 0 || column < 0 || column > head_ptr->data[0]->capacity){
             printf("Error: coordinates provided do not exist within the matrix.\n");
-            return 0;
+            return NULL;
         }
+
+
         //if matrix exists and coordinates are in-bounds, then function will print desired element to console and return 1.
         else {
-            printf("element at (%d,%d): %d", row, column, head_ptr->data[column]->data[row]);
-            return 1;
+            int elem_to_print = head_ptr->data[column]->data[row];
+            printf("element at (%d,%d): %d", row, column, elem_to_print);
+            return elem_to_print;
         }
     }
 
@@ -220,35 +249,35 @@ int print_element(struct header_array* head_ptr, int row, int column, enum orien
 
 /**
  * 
- * Print row will take in a row index from the user and print the elements to the console
+ * Print row will take in a row index from the user and print the elements to the console.
  * 
- * Inputs:  head_ptr - pointer to the header array of the desired matrix
- *          row      - the index of the desired row to print elements from
- *          orient   - the orientation of the matrix, either row major or column major
+ * Inputs:  head_ptr - pointer to the header array of the desired matrix.
+ *          row      - the index of the desired row to print elements from.
  * 
- * Outputs: - prints elements of desired row to console
- *          - will return a 1 upon success or 0 if failed
+ * Outputs: - prints elements of desired row to console.
+ *          - will return a 1 upon success or NULL if failed
  *
 */
-int print_row(struct header_array* head_ptr, int row, enum orientation orient) {
+int print_row(struct header_array* head_ptr, int row) {
 
-    if (orient == ROW) {
+    if (head_ptr->orient == ROW) {
 
         //error handling: check if matrix exists. will continue function if it does, or return 0 if it does not.
         if(head_ptr == NULL){
             printf("Error: matrix does not exist. please create a matrix and try again.\n");
-            return 0;
+            return NULL;
         }
         //checks to make sure the desired row exists within the matrix / is in bounds. will continue function if it does, or will return 0. 
         else if(row > head_ptr->capacity || row < 0) {
             printf("Error: desired row is out of bounds. please try again.\n");
-            return 0;
+            return NULL;
         }
         //if error handling is passed, then funcion continues as expected here.
         else {
             for(int j = 0; j < head_ptr->data[row]->capacity; j++) {
                 printf("[%d]", head_ptr->data[row]->data[j]);
             }
+            printf("\n");
             return 1;
         }
 
@@ -279,27 +308,27 @@ int print_row(struct header_array* head_ptr, int row, enum orientation orient) {
 
 /**
  * 
- * Print column will take in a row index from the user and print the elements to the console
+ * Print column will take in a row index from the user and print the elements to the console.
  * 
- * Inputs:  head_ptr - pointer to the header array of the desired matrix
- *          column      - the index of the desired column to print elements from
- *          orient   - the orientation of the matrix, either row major or column major
+ * Inputs:  head_ptr - pointer to the header array of the desired matrix.
+ *          column      - the index of the desired column to print elements from.
  * 
  * Outputs: - prints elements of desired column to console
  *          - will return a 1 upon success or 0 if failed
  *
 */
-int print_column(struct header_array* head_ptr, int column, enum orientation orient) {
+int print_column(struct header_array* head_ptr, int column) {
 
 }
 
 
 int main() {
-    //test data will go here
+    
     enum orientation orient_row = ROW;
     enum orientation orient_col = COL;
-    struct header_array* head_ptr_row = Matrix_Init(5,3,orient_row);
-    get_rows(head_ptr_row, orient_row);
-    get_columns(head_ptr_row, orient_row);
+    struct header_array* head_ptr_row = Matrix_Init(5,5.8,orient_row);
+    get_rows(head_ptr_row);
+    get_columns(head_ptr_row);
+    
 
 }
