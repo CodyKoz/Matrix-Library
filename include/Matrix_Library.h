@@ -1,5 +1,5 @@
-#ifndef Matrix_Library.h
-#define Matrix_Library.h
+#ifndef Matrix_Library
+#define Matrix_Library
 
 
 struct dynamic_array;

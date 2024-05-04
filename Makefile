@@ -1,11 +1,13 @@
 CC=gcc
-CFlags=-Wall
+CFlags=-Wall # update CFLAGS to all caps
 
-SRCS=Matrix_Library.c
-OBJS=$(SRCS: .c=.o)
-EXEC=Matrix_Library
+SRCS=src/Matrix_Library.c Tests/Test_Library.c
+OBJS=$(SRCS:.c=.o)
+EXEC=Matrix-Library
 
-all: $(EXEC)
+all: build
+
+build: $(EXEC)
 
 $(EXEC): $(OBJS)
 	$(CC) $(CFlags) $(OBJS) -o $(EXEC)
@@ -14,4 +16,7 @@ $(EXEC): $(OBJS)
 	$(CC) $(CFlags) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -rf $(OBJS) $(EXEC)
+
+run: build
+	./$(EXEC)

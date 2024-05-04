@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "matrix_library.h": "c",
+        "stdio.h": "c"
+    },
+    "makefile.launchConfigurations": [
+        
+    ],
+    "makefile.makefilePath": "Makefile",
+    "makefile.makePath": "Makefile"
+}
