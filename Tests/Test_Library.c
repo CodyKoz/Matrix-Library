@@ -16,6 +16,18 @@ void test_matrix_init (int rows, int cols, enum orientation orient) {
 }
 
 
+void test_free_matrix(struct header_array* head_ptr, int expected) {
+    int result = free_matrix(head_ptr);
+
+    if (result == -1) {
+        printf(" !!! Test fail: free_matrix(%p) = %d\n", head_ptr, result);
+    }
+    else {
+        printf("Test pass: free_matrix(%p) = %d\n", head_ptr, result);
+    }
+};
+
+
 void test_get_rows(struct header_array* head_ptr, int expected) {
     
     int result = get_rows(head_ptr);
@@ -69,5 +81,6 @@ int main () {
     struct header_array* head_ptr_row = matrix_init(5,5.8,orient_row);
     get_rows(head_ptr_row);
     get_columns(head_ptr_row);
+    test_free_matrix(head_ptr_row, 1);
 
 }

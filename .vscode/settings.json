@@ -8,5 +8,8 @@
         
     ],
     "makefile.makefilePath": "Makefile",
-    "makefile.makePath": "Makefile"
+    "makefile.makePath": "Makefile",
+    "makefile.configurations": [
+        
+    ]
 }

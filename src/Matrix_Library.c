@@ -110,10 +110,26 @@ void* matrix_init (int rows, int cols, enum orientation orient) {
  * Inputs:  head_ptr - the pointer to the header array of the matrix.
  *          orient   - the orientation of the matrix. this matters for determining the order in which memory is freed.
  * 
- * Outputs: returns 1 upon success, or 0 upon failure.
+ * Outputs: returns 1 upon success, or -1 upon failure.
  * 
 */
-//int free_matrix (struct header_array* head_ptr) {}
+int free_matrix (struct header_array* head_ptr) {
+    if(head_ptr == NULL) {
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        return -1;
+    }
+    else {
+        //freeing the rows/cols of matrix
+        for(int j = head_ptr->size; j > -1; j--) {
+            free(head_ptr->data[j]);
+            head_ptr->size = head_ptr->size - 1;
+        }
+        //freeing the header array that points to the matrix
+        free(head_ptr);
+
+        return 1;
+    }
+}
 
 
 /**
