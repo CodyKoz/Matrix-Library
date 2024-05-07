@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-Wall 
+CFLAGS=-Wall
 
-SRCS=src/Matrix_Library.c Tests/Test_Library.c
+SRCS=Tests/Test_Library.c src/Matrix_Library.c
 OBJS=$(SRCS:.c=.o)
 EXEC=Matrix-Library
 

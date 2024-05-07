@@ -22,6 +22,12 @@ int get_columns();
 
 int print_element();
 
+int set_element();
+
+int set_row();
+
+int set_column();
+
 int print_row();
 
 int print_column();

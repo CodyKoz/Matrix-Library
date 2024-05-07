@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include "../include/Matrix_Library.h"
 
-
+#define PRINTS
 
 struct dynamic_array
 {
     int size;
     int capacity;
-    int data[];
+    int* data;
 };
 
 struct header_array
@@ -16,11 +16,12 @@ struct header_array
     int size;
     int capacity;
 
-    //orient stores the orientation of the matrix. will determine how the matrix is iterated through in other functions
+    //orient stores the orientation of the matrix. 
+    //will determine how the matrix is iterated through in other functions
     enum orientation orient;
 
-    //'data' will store a pointer to a dynamic array, which is defined above.
-    struct dynamic_array* data[];
+    //'data' will store a double-pointer to a dynamic array, which is defined above.
+    struct dynamic_array** data;
 };
 
 enum orientation;
@@ -62,19 +63,24 @@ void* matrix_init (int rows, int cols, enum orientation orient) {
         head_ptr->capacity = rows;
         head_ptr->orient = orient;
         
-        //printf("headptr address: %p \n", &head_ptr);
+        //initializes the dynamic array that will store the dynamic array pointers
+        head_ptr->data = (struct dynamic_array**)malloc(sizeof(struct dynamic_array*)*rows);
 
         //populate the header array with dynamic arrays (these will house the contents of the matrix)
         for(int x = 0; x < head_ptr->capacity; x++) {
-
-            struct dynamic_array* matrix_row_ptr = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*cols);
-            matrix_row_ptr->capacity = cols;
-            head_ptr->data[x] = matrix_row_ptr;
+            
+            head_ptr->data[x] = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*cols);
+            head_ptr->data[x]->capacity = cols;
 
             head_ptr->size = x + 1;
+
+
         };
 
+        #ifdef PRINTS
         printf("Matrix created successfully!\n");
+        #endif
+
         return head_ptr;
 
     }
@@ -83,25 +89,30 @@ void* matrix_init (int rows, int cols, enum orientation orient) {
         struct header_array* head_ptr = (struct header_array*)malloc(sizeof(void*)*cols);
         head_ptr->capacity = cols;
         head_ptr->orient = orient;
-        //printf("headptr address: %p \n", &head_ptr);
+        
+        //initializes the dynamic array that will store the dynamic array pointers
+        head_ptr->data = (struct dynamic_array**)malloc(sizeof(struct dynamic_array*)*cols);
 
         //populate the header array with dynamic arrays (these will house the contents of the matrix)
         for(int x = 0; x < head_ptr->capacity; x++) {
 
-            struct dynamic_array* matrix_row_ptr = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*rows);
-            matrix_row_ptr->capacity = rows;
-            head_ptr->data[x] = matrix_row_ptr;
+            head_ptr->data[x] = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*rows);
+            head_ptr->data[x]->capacity = rows;
 
             head_ptr->size = x + 1;
         };
 
+        #ifdef PRINTS
         printf("Matrix created successfully!\n");
+        #endif
+
         return head_ptr;
 
     }
 
     
 }
+
 
 /**
  * 
@@ -119,13 +130,12 @@ int free_matrix (struct header_array* head_ptr) {
         return -1;
     }
     else {
-        //freeing the rows/cols of matrix
-        for(int j = head_ptr->size; j > -1; j--) {
-            free(head_ptr->data[j]);
-            head_ptr->size = head_ptr->size - 1;
+        //freeing the dynamic arrays stored inside the header array
+        for(int j = 0; j < head_ptr->size; j++) {
+            free(head_ptr->data[j]);                        
         }
         //freeing the header array that points to the matrix
-        free(head_ptr);
+        //free(head_ptr);
 
         return 1;
     }
@@ -140,7 +150,7 @@ int free_matrix (struct header_array* head_ptr) {
  *          orient   - whether the matrix is oriented row or column major.
  * 
  * outputs: returns an integer with the number of rows in the given matrix.
- *          returns NULL if unsuccessful.
+ *          returns -1 if unsuccessful.
  * 
 */
 int get_rows(struct header_array* head_ptr) {
@@ -151,16 +161,25 @@ int get_rows(struct header_array* head_ptr) {
     else {
         if(head_ptr->orient == ROW) {
             int num_of_rows = head_ptr->capacity;
+
+            #ifdef PRINTS
             printf("number of rows: %d\n", num_of_rows);
+            #endif
+
             return num_of_rows;
         }
         else {
             int num_of_rows = head_ptr->data[0]->capacity;
+
+            #ifdef PRINTS
             printf("number of rows: %d\n", num_of_rows);
+            #endif
+
             return num_of_rows;
         }
     }
 }
+
 
 /**
  * 
@@ -182,12 +201,20 @@ int get_columns(struct header_array* head_ptr) {
     else {
         if(head_ptr->orient == ROW) {
             int num_of_cols = head_ptr->data[0]->capacity;
+
+            #ifdef PRINTS
             printf("number of columns: %d\n", num_of_cols);
+            #endif
+
             return num_of_cols;
         }
         else {
             int num_of_cols = head_ptr->capacity;
+
+            #ifdef PRINTS
             printf("number of columns: %d\n", num_of_cols);
+            #endif
+
             return num_of_cols; 
         }
         
@@ -258,6 +285,31 @@ int print_element(struct header_array* head_ptr, int row, int column) {
 }
 
 
+int set_element(struct header_array* head_ptr, int row, int column, int elem_to_set) {
+    //error handling: checking to make sure the matrix exists.
+    if(head_ptr == NULL) {
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        return -1;
+    }
+    //error handling: checking that the user-given coordinates are within the bounds of the matrix.
+    else if(row < 0 || row > head_ptr->capacity || row < 0 || column < 0 || column > head_ptr->data[0]->capacity){
+        printf("Error: coordinates provided do not exist within the matrix.\n");
+        return -1;
+    }
+    //if error handling is passed, then function runs as expected.
+    else {
+        if(head_ptr->orient == ROW) {
+            head_ptr->data[row]->data[column] = elem_to_set;
+            return 1;
+        }
+        else {
+            head_ptr->data[column]->data[row] = elem_to_set;
+            return 1;
+        }
+    }
+};
+
+
 /**
  * 
  * Print row will take in a row index from the user and print the elements to the console.
@@ -285,6 +337,7 @@ int print_row(struct header_array* head_ptr, int row) {
         }
         //if error handling is passed, then funcion continues as expected here.
         else {
+            printf("row %d: ", row);
             for(int j = 0; j < head_ptr->data[row]->capacity; j++) {
                 printf("[%d]", head_ptr->data[row]->data[j]);
             }
@@ -328,6 +381,71 @@ int print_row(struct header_array* head_ptr, int row) {
  *          - will return a 1 upon success or 0 if failed
  *
 */
-//int print_column(struct header_array* head_ptr, int column) {}
+int print_column(struct header_array* head_ptr, int column) {
+
+    if (head_ptr->orient == ROW) {
+
+        //error handling: check if matrix exists. will continue function if it does, or return 0 if it does not.
+        if(head_ptr == NULL){
+            printf("Error: matrix does not exist. please create a matrix and try again.\n");
+            return 0;
+        }
+        //checks to make sure the desired row exists within the matrix / is in bounds. will continue function if it does, or will return 0. 
+        else if(column > head_ptr->capacity || column < 0) {
+            printf("Error: desired column is out of bounds. please try again.\n");
+            return 0;
+        }
+        //if error handling is passed, then funcion continues as expected here.
+        else {
+            printf("column %d:\n", column);
+            for(int j = 0; j < head_ptr->capacity; j++) {
+                printf("[%d]\n", head_ptr->data[j]->data[column]);
+            }
+        }
+
+    }
+    else {
+
+        //error handling: check if matrix exists. will continue function if it does, or return 0 if it does not.
+        if(head_ptr == NULL){
+            printf("Error: matrix does not exist. please create a matrix and try again.\n");
+            return 0;
+        }
+        //checks to make sure the desired row exists within the matrix / is in bounds. will continue function if it does, or will return 0. 
+        else if(column > head_ptr->capacity || column < 0) {
+            printf("Error: desired row is out of bounds. please try again.\n");
+            return 0;
+        }
+        //if error handling is passed, then funcion continues as expected here.
+        else {
+            printf("column %d: \n", column);
+            for(int j = 0; j < head_ptr->data[column]->capacity; j++) {
+                printf("[%d]\n", head_ptr->data[column]->data[j]);
+                return 1;
+            }
+        }
+
+    }
+}
 
 
+int set_row() {
+
+};
+
+
+int set_column() {
+
+};
+
+
+int main () {
+
+    enum orientation orient_row = ROW;
+    //enum orientation orient_col = COL;
+    struct header_array* head_ptr_row = matrix_init(4,3,orient_row);
+    get_rows(head_ptr_row);
+    get_columns(head_ptr_row);
+    free_matrix(head_ptr_row);
+
+}

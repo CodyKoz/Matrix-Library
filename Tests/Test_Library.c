@@ -53,15 +53,27 @@ void test_get_columns(struct header_array* head_ptr, int expected) {
 }
 
 
+void test_set_element(struct header_array* head_ptr, int row, int column, int elem_to_set, int expected) {
+    int result = set_element(head_ptr, row, column, elem_to_set);
+    if(result != expected) {
+        printf(" !!! Test fail: set_element(%p,%d,%d,%d) = %d. expected: %d", head_ptr, row, column, elem_to_set, result, expected);
+    }
+    else {
+        printf("Test pass: set_element(%p,%d,%d,%d) = %d. expected: %d", head_ptr, row, column, elem_to_set, result, expected);
+    }
+}
+
+
 void test_print_element(struct header_array* head_ptr, int row, int column, int expected) {
     int result = print_element(head_ptr, row, column);
-    if (result != expected) {
+    if(result != expected) {
         printf(" !!! Test fail: print_element(%p,%d,%d) = %d. expected: %d\n", head_ptr, row, column, result, expected);
     }
     else {
         printf("Test pass: print_element(%p,%d,%d) = %d. expected: %d\n", head_ptr, row, column, result, expected);
     }
 }
+
 
 
 void test_print_row() {
@@ -74,13 +86,25 @@ void test_print_column() {
 }
 
 
+void test_set_row() {
+
+}
+
+
+void test_set_column() {
+
+}
+
+
 int main () {
 
     enum orientation orient_row = ROW;
     //enum orientation orient_col = COL;
-    struct header_array* head_ptr_row = matrix_init(5,5.8,orient_row);
-    get_rows(head_ptr_row);
-    get_columns(head_ptr_row);
+    struct header_array* head_ptr_row = matrix_init(4,3,orient_row);
+    test_get_rows(head_ptr_row, 4);
+    test_get_columns(head_ptr_row, 3);
     test_free_matrix(head_ptr_row, 1);
+    test_set_element(head_ptr_row, 0, 0, 7, 1);
+    test_print_element(head_ptr_row, 0, 0, 7);
 
 }
