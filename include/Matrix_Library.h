@@ -1,14 +1,23 @@
 #ifndef Matrix_Library
 #define Matrix_Library
 
+struct Matrix;
 
-struct dynamic_array;
+enum data_type {
+    INT,
+    FLOAT,
+    DOUBLE,
+};
 
-struct header_array;
+union data_val {
+    int itgr;
+    float flt;
+    double dbl;
+};
 
 enum orientation {
     ROW,
-    COL
+    COL,
 };
 
 
@@ -28,8 +37,8 @@ int set_row();
 
 int set_column();
 
-int print_row();
+void* print_row();
 
-int print_column();
+void* print_column();
 
 #endif
