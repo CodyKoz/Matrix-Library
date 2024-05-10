@@ -1,7 +1,17 @@
 #ifndef Matrix_Library
 #define Matrix_Library
 
-struct Matrix;
+#define NO_VAL_INT 5113
+#define NO_VAL_FLOAT 5113.1
+#define NO_VAL_DOUBLE 5113.118965624515
+
+struct dynamic_array
+{
+    int size;
+    int capacity;
+    union data_val* values;
+};
+
 
 enum data_type {
     INT,
@@ -20,6 +30,20 @@ enum orientation {
     COL,
 };
 
+struct matrix {
+
+    int rows;
+    int columns;
+    enum orientation orient;
+    enum data_type data_type;
+    struct dynamic_array* matrix_data;  
+
+};
+
+
+int devalue_matrix();
+
+int check_population();
 
 void* matrix_init();
 
@@ -29,7 +53,7 @@ int get_rows();
 
 int get_columns();
 
-int print_element();
+union data_val get_element();
 
 int set_element();
 
@@ -40,5 +64,7 @@ int set_column();
 void* print_row();
 
 void* print_column();
+
+void* add_matrices();
 
 #endif
