@@ -67,4 +67,20 @@ void* print_column();
 
 void* add_matrices();
 
+void* subtract_matrices();
+
+void* multiply_matrices();
+//--------------------------------------- !!!  need to implement still  !!!
+void* duplicate_matrix();
+
+void* create_subset();
+    //not sure what return type to do for this one
+int set_subset_to_matrix();
+
+void* resize_matrix();
+
+int compare_instance();
+
+int compare_contents();
+
 #endif

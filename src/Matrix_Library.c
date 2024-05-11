@@ -26,49 +26,56 @@ struct matrix;
 */
 int devalue_matrix(struct matrix* matrix_in) {
 
-    if(matrix_in->orient == ROW) {   
-        for(int i = 0; i < matrix_in->rows; i++) {
-            //helps keep track of how many values are in a given row/column
-            matrix_in->matrix_data[i].size = 0;
-            
-            for(int j = 0; j < matrix_in->columns; j++) {
-
-                switch (matrix_in->data_type) {
-                    case INT:
-                        matrix_in->matrix_data[i].values[j].itgr = NO_VAL_INT;
-                        break;
-                    case FLOAT:
-                        matrix_in->matrix_data[i].values[j].flt = NO_VAL_FLOAT;
-                        break;
-                    case DOUBLE:
-                        matrix_in->matrix_data[i].values[j].dbl = NO_VAL_DOUBLE;
-                        break;
-                }
-            }
-        }
+    if(matrix_in == NULL) {
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        return -1;
     }
     else {
-        for(int i = 0; i < matrix_in->columns; i++) {
-            //helps keep track of how many values are in a given row/column
-            matrix_in->matrix_data[i].size = 0;
-            
-            for(int j = 0; j < matrix_in->rows; j++) {
+        if(matrix_in->orient == ROW) {   
+            for(int i = 0; i < matrix_in->rows; i++) {
+                //helps keep track of how many values are in a given row/column
+                matrix_in->matrix_data[i].size = 0;
+                
+                for(int j = 0; j < matrix_in->columns; j++) {
 
-                switch (matrix_in->data_type) {
-                    case INT:
-                        matrix_in->matrix_data[i].values[j].itgr = NO_VAL_INT;
-                        break;
-                    case FLOAT:
-                        matrix_in->matrix_data[i].values[j].flt = NO_VAL_FLOAT;
-                        break;
-                    case DOUBLE:
-                        matrix_in->matrix_data[i].values[j].dbl = NO_VAL_DOUBLE;
-                        break;
+                    switch (matrix_in->data_type) {
+                        case INT:
+                            matrix_in->matrix_data[i].values[j].itgr = NO_VAL_INT;
+                            break;
+                        case FLOAT:
+                            matrix_in->matrix_data[i].values[j].flt = NO_VAL_FLOAT;
+                            break;
+                        case DOUBLE:
+                            matrix_in->matrix_data[i].values[j].dbl = NO_VAL_DOUBLE;
+                            break;
+                    }
                 }
             }
+            return 1;
+        }
+        else {
+            for(int i = 0; i < matrix_in->columns; i++) {
+                //helps keep track of how many values are in a given row/column
+                matrix_in->matrix_data[i].size = 0;
+                
+                for(int j = 0; j < matrix_in->rows; j++) {
+
+                    switch (matrix_in->data_type) {
+                        case INT:
+                            matrix_in->matrix_data[i].values[j].itgr = NO_VAL_INT;
+                            break;
+                        case FLOAT:
+                            matrix_in->matrix_data[i].values[j].flt = NO_VAL_FLOAT;
+                            break;
+                        case DOUBLE:
+                            matrix_in->matrix_data[i].values[j].dbl = NO_VAL_DOUBLE;
+                            break;
+                    }
+                }
+            }
+            return 1;
         }
     }
-
 }
 
 
@@ -83,83 +90,89 @@ int devalue_matrix(struct matrix* matrix_in) {
  * 
 */
 int check_population(struct matrix* matrix_in) {
-
-    if(matrix_in->orient == ROW) {
-
-        //will be set to 1, unless loop finds a "NO_VAL" value in a matrix location,
-        //in that case, 'is_populated' will be set to 0
-        int is_populated = 1;
-
-        for(int i = 0; i < matrix_in->rows; i++) {
-            for(int j = 0; j < matrix_in->columns; j++) {
-                switch(matrix_in->data_type) {
-                    case INT:
-                        if(matrix_in->matrix_data[i].values[j].itgr == NO_VAL_INT) {
-                            is_populated = 0;
-                            break;
-                        }
-                        else {
-                            break;
-                        }
-                    case FLOAT:
-                        if(matrix_in->matrix_data[i].values[j].flt == NO_VAL_FLOAT) {
-                            is_populated = 0;
-                            break;
-                        }
-                        else {
-                            break;
-                        }
-                    case DOUBLE:
-                        if(matrix_in->matrix_data[i].values[j].dbl == NO_VAL_DOUBLE) {
-                            is_populated = 0;
-                            break;
-                        }
-                        else {
-                            break;
-                        }
-                }
-            }
-        }
-        return is_populated;
+        
+    if(matrix_in == NULL) {
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        return -1;
     }
     else {
-        //will be set to 1, unless loop finds a "NO_VAL" value in a matrix location,
-        //in that case, 'is_populated' will be set to -1.
-        int is_populated = 1;
 
-        for(int i = 0; i < matrix_in->columns; i++) {
-            for(int j = 0; j < matrix_in->rows; j++) {
-                switch(matrix_in->data_type) {
-                    case INT:
-                        if(matrix_in->matrix_data[i].values[j].itgr == NO_VAL_INT) {
-                            is_populated = 0;
-                            break;
-                        }
-                        else {
-                            break;
-                        }
-                    case FLOAT:
-                        if(matrix_in->matrix_data[i].values[j].flt == NO_VAL_FLOAT) {
-                            is_populated = 0;
-                            break;
-                        }
-                        else {
-                            break;
-                        }
-                    case DOUBLE:
-                        if(matrix_in->matrix_data[i].values[j].dbl == NO_VAL_DOUBLE) {
-                            is_populated = 0;
-                            break;
-                        }
-                        else {
-                            break;
-                        }
+        if(matrix_in->orient == ROW) {
+
+            //will be set to 1, unless loop finds a "NO_VAL" value in a matrix location,
+            //in that case, 'is_populated' will be set to 0
+            int is_populated = 1;
+
+            for(int i = 0; i < matrix_in->rows; i++) {
+                for(int j = 0; j < matrix_in->columns; j++) {
+                    switch(matrix_in->data_type) {
+                        case INT:
+                            if(matrix_in->matrix_data[i].values[j].itgr == NO_VAL_INT) {
+                                is_populated = 0;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+                        case FLOAT:
+                            if(matrix_in->matrix_data[i].values[j].flt == NO_VAL_FLOAT) {
+                                is_populated = 0;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+                        case DOUBLE:
+                            if(matrix_in->matrix_data[i].values[j].dbl == NO_VAL_DOUBLE) {
+                                is_populated = 0;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+                    }
                 }
             }
+            return is_populated;
         }
-        return is_populated;
-    }
+        else {
+            //will be set to 1, unless loop finds a "NO_VAL" value in a matrix location,
+            //in that case, 'is_populated' will be set to -1.
+            int is_populated = 1;
 
+            for(int i = 0; i < matrix_in->columns; i++) {
+                for(int j = 0; j < matrix_in->rows; j++) {
+                    switch(matrix_in->data_type) {
+                        case INT:
+                            if(matrix_in->matrix_data[i].values[j].itgr == NO_VAL_INT) {
+                                is_populated = 0;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+                        case FLOAT:
+                            if(matrix_in->matrix_data[i].values[j].flt == NO_VAL_FLOAT) {
+                                is_populated = 0;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+                        case DOUBLE:
+                            if(matrix_in->matrix_data[i].values[j].dbl == NO_VAL_DOUBLE) {
+                                is_populated = 0;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+                    }
+                }
+            }
+            return is_populated;
+        }
+    }
 }
 
 
@@ -264,11 +277,20 @@ int free_matrix (struct matrix* matrix_in) {
         return -1;
     }
     else {
-        //freeing the union arrays stored in each dynamic array struct
-        for(int x = 0; x < matrix_in->matrix_data->capacity; x++) {
-            free(matrix_in->matrix_data[x].values);
-        }
 
+        if(matrix_in->matrix_data != NULL) {
+
+            //freeing the union arrays stored in each dynamic array struct
+            for(int x = 0; x < matrix_in->matrix_data->capacity; x++) {
+
+                if(matrix_in->matrix_data[x].values != NULL) {
+                    free(matrix_in->matrix_data[x].values);
+                    matrix_in->matrix_data[x].values = NULL;
+                }
+
+            }
+
+        }
         //freeing the memory block of dynamic arrays
         free(matrix_in->matrix_data);
 
@@ -1079,88 +1101,599 @@ void* add_matrices(struct matrix* matrix_1, struct matrix* matrix_2) {
 }
 
 
-int main() {
+/**
+ * 
+ * @brief will subtract of the respective elements in two matrices and return a new matrix with the difference values. 
+ * 
+ * @param matrix_1 pointer to a matrix struct.
+ * @param matrix_2 pointer to a matrix struct.
+ * 
+ * @return on success returns a pointer to a matrix that is the difference of the two input matrices. 
+ * @return on failure, returns a NULL pointer.
+ * 
+*/
+void* subtract_matrices(struct matrix* matrix_1, struct matrix* matrix_2) {
 
-    //setting variables up
-    enum orientation orient_row = ROW;
-    enum orientation orient_col = COL;
-    enum data_type dt_int = INT;
-    enum data_type dt_flt = FLOAT;
-    enum data_type dt_dbl = DOUBLE;
-
-    union data_val int1, int2, int3, int4, int5, int6, int7, int8, int9;
-    int1.itgr = 397;
-    int2.itgr = -82;
-    int3.itgr = 3;
-    int4.itgr = -8000;
-    int5.itgr = 0;
-    int6.itgr = 1;
-    int7.itgr = 23;
-    int8.itgr = 40;
-    int9.itgr = 66;
-    
-    union data_val flt1, flt2, flt3, flt4, flt5;
-    flt1.flt = 10.7;
-    flt2.flt = 3.7;
-    flt3.flt = 5.4;
-    flt4.flt = 8.0;
-    flt5.flt = 100.3;
-
-    union data_val dbl1, dbl2, dbl3, dbl4, dbl5;
-    dbl1.dbl = 3.1415926;
-    dbl2.dbl = 3.1415926;
-    dbl3.dbl = 3.1415926;
-    dbl4.dbl = 3.1415926;
-    dbl5.dbl = 3.1415926;
-    
-
-    //initializing matrices
-    struct matrix* row_matrix = matrix_init(3, 3, orient_row , dt_int);
-    struct matrix* col_matrix = matrix_init(3, 3, orient_col , dt_int);
-
-
-    //set and get single element test
-    set_element(row_matrix, 0, 0, int3);
-    union data_val ret_val = get_element(row_matrix, 0, 0);
-    printf("value at (0,0): %d\n", ret_val.itgr);
-
-
-    //testing set/get row/col
-    union data_val row_to_set1[] = {int1, int2, int3};
-    union data_val row_to_set2[] = {int4, int5, int6};
-    union data_val row_to_set3[] = {int7, int8, int9};
-    union data_val col_to_set[] = {int4, int2, int5};
-
-    size_t row_size = sizeof(row_to_set1) / sizeof(row_to_set1[0]);
-    size_t col_size = sizeof(col_to_set) / sizeof(col_to_set[0]);
-
-    set_row(row_matrix, 0, row_to_set1, row_size);
-    set_row(row_matrix, 1, row_to_set2, row_size);
-    set_row(row_matrix, 2, row_to_set3, row_size);
-    // set_column(row_matrix, 1, col_to_set, col_size);
-
-    union data_val* row_result = print_row(row_matrix, 1);
-    union data_val* col_result = print_column(row_matrix, 1);
-
-    //print row 1 of matrix
-    printf("row %d: ", 1);
-    for(int x = 0; x < row_size; x++) {
-        int temp = row_result[x].itgr;
-        printf("[%d]", temp);
+    //error handling: do both matrices exist?
+    if(matrix_1 == NULL || matrix_2 == NULL) {
+        printf("Error: at least one matrix does not exist.");
+        void* null_ptr = NULL;
+        return null_ptr;
     }
-    printf("\n"); 
-
-
-    //print column 1 of matrix
-    printf("column %d: \n", 1);
-    for(int x = 0; x < col_size; x++) {
-        int temp = col_result[x].itgr;
-        printf("[%d]\n", temp);
+    //error handling: are both matrices the same dimensions?
+    else if(matrix_1->rows != matrix_2->rows || matrix_1->columns != matrix_2->columns) {
+        printf("Error: matrices are not the same size.");
+        void* null_ptr = NULL;
+        return null_ptr;
     }
+    //error handling: are both matrices the same orientation?
+    else if(matrix_1->orient != matrix_2->orient) {
+        printf("Error: matrices are not the same orientation.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same data type?
+    else if(matrix_1->data_type != matrix_2->data_type) {
+        printf("Error: matrices are not the same data type.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices fully populated?
+    else if(check_population(matrix_1) != 1 || check_population(matrix_2) != 1 ) {
+        printf("Error: at least one matrix is not fully populated.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //if all error handling is passed, function continues as expected.
+    else {
 
-    //freeing matrices
-    free_matrix(row_matrix);
-    free_matrix(col_matrix);
+        struct matrix* diff_matrix = matrix_init(matrix_1->rows, matrix_1->columns, matrix_1->orient, matrix_1->data_type);
+
+        if(matrix_1->orient == ROW) {
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_1->rows; i++) {
+
+                for(int j = 0; j < matrix_1->columns; j++) {
+
+                    union data_val new_val;
+
+                    switch(matrix_1->data_type) {
+                        case INT:
+
+                            //new_val stores difference of matrix elems at index [i][j]
+                            //then, new_val is set to the corresponding index in the new 'diff_matrix'
+                            new_val.itgr = matrix_1->matrix_data[i].values[j].itgr - matrix_2->matrix_data[i].values[j].itgr;
+                            diff_matrix->matrix_data[i].values[j].itgr = new_val.itgr;
+                            break;
+
+                        case FLOAT:
+
+                            new_val.flt = matrix_1->matrix_data[i].values[j].flt - matrix_2->matrix_data[i].values[j].flt;
+                            diff_matrix->matrix_data[i].values[j].flt = new_val.flt;
+                            break;
+
+                        case DOUBLE:
+
+                            new_val.dbl = matrix_1->matrix_data[i].values[j].dbl - matrix_2->matrix_data[i].values[j].dbl;
+                            diff_matrix->matrix_data[i].values[j].flt = new_val.dbl;
+                            break;
+                    }
+                }
+            }
+            return diff_matrix;
+        }
+        else {
+
+            struct matrix* diff_matrix = matrix_init(matrix_1->rows, matrix_1->columns, matrix_1->orient, matrix_1->data_type);
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_1->rows; i++) {
+
+                for(int j = 0; j < matrix_1->columns; j++) {
+
+                    union data_val new_val;
+
+                    switch(matrix_1->data_type) {
+                        case INT:
+
+                            //new_val stores difference of matrix elems at index [i][j]
+                            //then, new_val is set to the corresponding index in the new 'diff_matrix'
+                            new_val.itgr = matrix_1->matrix_data[i].values[j].itgr - matrix_2->matrix_data[i].values[j].itgr;
+                            diff_matrix->matrix_data[i].values[j].itgr = new_val.itgr;
+                            break;
+
+                        case FLOAT:
+
+                            new_val.flt = matrix_1->matrix_data[i].values[j].flt - matrix_2->matrix_data[i].values[j].flt;
+                            diff_matrix->matrix_data[i].values[j].flt = new_val.flt;
+                            break;
+
+                        case DOUBLE:
+
+                            new_val.dbl = matrix_1->matrix_data[i].values[j].dbl - matrix_2->matrix_data[i].values[j].dbl;
+                            diff_matrix->matrix_data[i].values[j].flt = new_val.dbl;
+                            break;
+                    }
+                }
+            }
+            return diff_matrix;
+        }
+    }
+}
+
+
+/**
+ * 
+ * @brief will multiply of the respective elements in two matrices and return a new matrix with the product values. 
+ * 
+ * @param matrix_1 pointer to a matrix struct.
+ * @param matrix_2 pointer to a matrix struct.
+ * 
+ * @return on success returns a pointer to a matrix that is the product of the two input matrices. 
+ * @return on failure, returns a NULL pointer.
+ * 
+*/
+void* multiply_matrices(struct matrix* matrix_1, struct matrix* matrix_2) {
+
+    //error handling: do both matrices exist?
+    if(matrix_1 == NULL || matrix_2 == NULL) {
+        printf("Error: at least one matrix does not exist.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same dimensions?
+    else if(matrix_1->rows != matrix_2->rows || matrix_1->columns != matrix_2->columns) {
+        printf("Error: matrices are not the same size.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same orientation?
+    else if(matrix_1->orient != matrix_2->orient) {
+        printf("Error: matrices are not the same orientation.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same data type?
+    else if(matrix_1->data_type != matrix_2->data_type) {
+        printf("Error: matrices are not the same data type.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices fully populated?
+    else if(check_population(matrix_1) != 1 || check_population(matrix_2) != 1 ) {
+        printf("Error: at least one matrix is not fully populated.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //if all error handling is passed, function continues as expected.
+    else {
+
+        struct matrix* prod_matrix = matrix_init(matrix_1->rows, matrix_1->columns, matrix_1->orient, matrix_1->data_type);
+
+        if(matrix_1->orient == ROW) {
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_1->rows; i++) {
+
+                for(int j = 0; j < matrix_1->columns; j++) {
+
+                    union data_val new_val;
+
+                    switch(matrix_1->data_type) {
+                        case INT:
+
+                            //new_val stores product of matrix elems at index [i][j]
+                            //then, new_val is set to the corresponding index in the new 'prod_matrix'
+                            new_val.itgr = matrix_1->matrix_data[i].values[j].itgr * matrix_2->matrix_data[i].values[j].itgr;
+                            prod_matrix->matrix_data[i].values[j].itgr = new_val.itgr;
+                            break;
+
+                        case FLOAT:
+
+                            new_val.flt = matrix_1->matrix_data[i].values[j].flt * matrix_2->matrix_data[i].values[j].flt;
+                            prod_matrix->matrix_data[i].values[j].flt = new_val.flt;
+                            break;
+
+                        case DOUBLE:
+
+                            new_val.dbl = matrix_1->matrix_data[i].values[j].dbl * matrix_2->matrix_data[i].values[j].dbl;
+                            prod_matrix->matrix_data[i].values[j].flt = new_val.dbl;
+                            break;
+                    }
+                }
+            }
+            return prod_matrix;
+        }
+        else {
+
+            struct matrix* prod_matrix = matrix_init(matrix_1->rows, matrix_1->columns, matrix_1->orient, matrix_1->data_type);
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_1->rows; i++) {
+
+                for(int j = 0; j < matrix_1->columns; j++) {
+
+                    union data_val new_val;
+
+                    switch(matrix_1->data_type) {
+                        case INT:
+
+                            //new_val stores product of matrix elems at index [i][j]
+                            //then, new_val is set to the corresponding index in the new 'prod_matrix'
+                            new_val.itgr = matrix_1->matrix_data[i].values[j].itgr * matrix_2->matrix_data[i].values[j].itgr;
+                            prod_matrix->matrix_data[i].values[j].itgr = new_val.itgr;
+                            break;
+
+                        case FLOAT:
+
+                            new_val.flt = matrix_1->matrix_data[i].values[j].flt * matrix_2->matrix_data[i].values[j].flt;
+                            prod_matrix->matrix_data[i].values[j].flt = new_val.flt;
+                            break;
+
+                        case DOUBLE:
+
+                            new_val.dbl = matrix_1->matrix_data[i].values[j].dbl * matrix_2->matrix_data[i].values[j].dbl;
+                            prod_matrix->matrix_data[i].values[j].flt = new_val.dbl;
+                            break;
+                    }
+                }
+            }
+            return prod_matrix;
+        }
+    }
+}
+
+
+/**
+ * 
+ * @brief will create a duplicate (deep copy) of a given matrix, with the same parameters, and values as the original.
+ * 
+ * @param matrix_in pointer to a matrix struct.
+ * 
+ * @return if successful, returns a void pointer to the duplicate matrix.
+ * @return if unsuccessful, returns a NULL pointer.
+ * 
+*/
+void* duplicate_matrix(struct matrix* matrix_in) {
+    //create new matrix with matching params as matrix_in
+    struct matrix* dupe_matrix = matrix_init(matrix_in->rows, matrix_in->columns, matrix_in->orient, matrix_in->data_type);
+    if(matrix_in == NULL) {
+        printf("Error: the input matrix does not exist.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    else {
+        //iterate through matrix_in, and add each elem to new matrix
+        if(matrix_in->orient == ROW) {
+            
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_in->rows; i++) {
+
+                for(int j = 0; j < matrix_in->columns; j++) {
+
+                    union data_val temp_val;
+
+                    switch(matrix_in->data_type) {
+                        case INT:
+
+                            temp_val.itgr = matrix_in->matrix_data[i].values[j].itgr;
+                            dupe_matrix->matrix_data[i].values[j].itgr = temp_val.itgr;
+                            break;
+
+                        case FLOAT:
+
+                            temp_val.flt = matrix_in->matrix_data[i].values[j].flt;
+                            dupe_matrix->matrix_data[i].values[j].flt = temp_val.flt;
+                            break;
+
+                        case DOUBLE:
+
+                            temp_val.dbl = matrix_in->matrix_data[i].values[j].dbl;
+                            dupe_matrix->matrix_data[i].values[j].dbl = temp_val.dbl;
+                            break;
+                    }
+                }
+            }
+            return dupe_matrix;
+        }
+        else {
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_in->columns; i++) {
+
+                for(int j = 0; j < matrix_in->rows; j++) {
+
+                    union data_val temp_val;
+
+                    switch(matrix_in->data_type) {
+                        case INT:
+
+                            temp_val.itgr = matrix_in->matrix_data[i].values[j].itgr;
+                            dupe_matrix->matrix_data[i].values[j].itgr = temp_val.itgr;
+                            break;
+
+                        case FLOAT:
+
+                            temp_val.flt = matrix_in->matrix_data[i].values[j].flt;
+                            dupe_matrix->matrix_data[i].values[j].flt = temp_val.flt;
+                            break;
+
+                        case DOUBLE:
+
+                            temp_val.dbl = matrix_in->matrix_data[i].values[j].dbl;
+                            dupe_matrix->matrix_data[i].values[j].dbl = temp_val.dbl;
+                            break;
+                    }
+                }
+            }
+            return dupe_matrix;
+        }
+    }
+}
+
+
+/**
+ * 
+ * @brief will store a subset of a given matrix in a separate matrix structure. takes in the number of rows and columns the subset will have,
+ * @brief as well as the upper-left index that the subset will start at.
+ * 
+ * @param matrix_in pointer to a matrix struct.
+ * @param subset_rows the number of rows the subset will have.
+ * @param subset_columns the number of columns the subset will have.
+ * @param row_point the lowest row index that the subset will start at.
+ * @param col_point the lowest column index that the subset will start at.
+ * 
+ * @return if successful, returns a void pointer to the subset matrix.
+ * @return if unsuccessful, returns a NULL pointer. 
+ * 
+*/
+void* create_subset(struct matrix* matrix_in, int subset_rows, int subset_columns, int row_point, int col_point) {
+    //error handling
+
+    //if passed error handling, create new matrix using the input dimensions: ss rows/cols
+
+    //starting at row/col point, iterate through matrix until bounds of subset are reached
+        //adding the value at each index to the new subset matrix
+
+
 
 }
+
+
+
+
+    //not sure what return type to do for this one
+// int set_subset_to_matrix();
+
+// void* resize_matrix();
+
+
+/**
+ * 
+ * @brief will compare if two matrix pointers are storing the memory address of the same matrix. ie: they are the same instance-wise.
+ * 
+ * @param matrix_1 pointer to a matrix struct
+ * @param matrix_2 pointer to a matrix strust
+ * 
+ * @return returns 1 if matrices are equal instance-wise.
+ * @return returns -1 if matrices are not equal instance-wise.
+ * 
+*/
+int compare_instance(struct matrix* matrix_1, struct matrix* matrix_2) {
+    if(matrix_1 == NULL || matrix_2 == NULL) {
+        printf("Error: at least one matrix does not exist.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    else {
+        if(&matrix_1 == &matrix_2) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    } 
+}
+
+
+/**
+ * 
+ * @brief will compare two matrices of equal size and orientation, to see if the values at each index are the same in both matrices.
+ * 
+ * @param matrix_1 pointer to a matrix struct
+ * @param matrix_2 pointer to a matrix strust
+ * 
+ * @return returns 1 if matrices are equal instance-wise.
+ * @return returns -1 if matrices are not equal instance-wise.
+ * 
+*/
+int compare_contents(struct matrix* matrix_1, struct matrix* matrix_2) {
+    //error handling: do both matrices exist?
+    if(matrix_1 == NULL || matrix_2 == NULL) {
+        printf("Error: at least one matrix does not exist.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same dimensions?
+    else if(matrix_1->rows != matrix_2->rows || matrix_1->columns != matrix_2->columns) {
+        printf("Error: matrices are not the same size.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same orientation?
+    else if(matrix_1->orient != matrix_2->orient) {
+        printf("Error: matrices are not the same orientation.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //error handling: are both matrices the same data type?
+    else if(matrix_1->data_type != matrix_2->data_type) {
+        printf("Error: matrices are not the same data type.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    //if error handling is passed then function continues as expected
+    else {
+        //iterate through matrix_1, compare values at each index to see if they match
+        //iterate through matrix_in, and add each elem to new matrix
+        if(matrix_1->orient == ROW) {
+            
+            int ret_val = 1;
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_1->rows; i++) {
+
+                for(int j = 0; j < matrix_1->columns; j++) {                    
+
+                    switch(matrix_1->data_type) {
+                        case INT:
+
+                            if(matrix_1->matrix_data[i].values[j].itgr != matrix_2->matrix_data[i].values[j].itgr){
+                                ret_val = -1;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+
+                        case FLOAT:
+
+                            if(matrix_1->matrix_data[i].values[j].flt != matrix_2->matrix_data[i].values[j].flt){
+                                ret_val = -1;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+
+                        case DOUBLE:
+
+                            if(matrix_1->matrix_data[i].values[j].dbl != matrix_2->matrix_data[i].values[j].dbl){
+                                ret_val = -1;
+                                break;
+                            }
+                            else {
+                                break;
+                            }    
+
+                    }
+                }
+            }
+            return ret_val;
+        }
+        else {
+
+            int ret_val;
+
+            //iterate through each index of the matrix
+            for(int i = 0; i < matrix_1->columns; i++) {
+
+                for(int j = 0; j < matrix_1->rows; j++) {
+
+                    switch(matrix_1->data_type) {
+                        case INT:
+
+                            if(matrix_1->matrix_data[i].values[j].itgr != matrix_2->matrix_data[i].values[j].itgr){
+                                ret_val = -1;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+
+                        case FLOAT:
+
+                            if(matrix_1->matrix_data[i].values[j].flt != matrix_2->matrix_data[i].values[j].flt){
+                                ret_val = -1;
+                                break;
+                            }
+                            else {
+                                break;
+                            }
+
+                        case DOUBLE:
+
+                        if(matrix_1->matrix_data[i].values[j].dbl != matrix_2->matrix_data[i].values[j].dbl){
+                                ret_val = -1;
+                                break;
+                            }
+                            else {
+                                break;
+                            }    
+                        
+                    }
+                }
+            }
+            return ret_val;
+        }
+    }
+    
+}
+
+
+
+
+// int main() {
+
+    //setting variables up
+    // enum orientation orient_row = ROW;
+    // enum orientation orient_col = COL;
+    // enum data_type dt_int = INT;
+    // enum data_type dt_flt = FLOAT;
+    // enum data_type dt_dbl = DOUBLE;
+
+    // union data_val int1, int2, int3, int4, int5, int6, int7, int8, int9;
+    // int1.itgr = 397;
+    // int2.itgr = -82;
+    // int3.itgr = 3;
+    // int4.itgr = -8000;
+    // int5.itgr = 0;
+    // int6.itgr = 1;
+    // int7.itgr = 23;
+    // int8.itgr = 40;
+    // int9.itgr = 66;
+    
+    // union data_val flt1, flt2, flt3, flt4, flt5;
+    // flt1.flt = 10.7;
+    // flt2.flt = 3.7;
+    // flt3.flt = 5.4;
+    // flt4.flt = 8.0;
+    // flt5.flt = 100.3;
+
+    // union data_val dbl1, dbl2, dbl3, dbl4, dbl5;
+    // dbl1.dbl = 3.1415926;
+    // dbl2.dbl = 3.1415926;
+    // dbl3.dbl = 3.1415926;
+    // dbl4.dbl = 3.1415926;
+    // dbl5.dbl = 3.1415926;
+    
+    //initializing matrices
+    // struct matrix* row_matrix_1 = matrix_init(1, 3, orient_row , dt_int);
+    // struct matrix* row_matrix_2 = matrix_init(1, 3, orient_row , dt_int);
+
+    // struct matrix* col_matrix_1 = matrix_init(2, 2, orient_col , dt_flt);
+    // struct matrix* col_matrix_2 = matrix_init(2, 2, orient_col , dt_flt);
+
+    //testing set/get row/col
+    // union data_val row_to_set1[] = {int1, int2, int3};
+    // union data_val row_to_set2[] = {int4, int5, int6};
+    // union data_val row_to_set3[] = {int7, int8, int9};
+
+    // union data_val col_to_set1[] = {flt1.flt, flt2.flt};
+    // union data_val col_to_set2[] = {flt3.flt, flt4.flt};
+
+    // set_row(row_matrix_1, 0, row_to_set1, 3);
+    // set_row(row_matrix_2, 0, row_to_set1, 3);
+
+    //add matrices + print row result
+    // struct matrix* sum_matrix = (struct matrix*)add_matrices(row_matrix_1, row_matrix_2);
+    
+    //freeing matrices
+    // free_matrix(row_matrix_1);
+    // free_matrix(row_matrix_2);
+    // free_matrix(col_matrix_1);
+    // free_matrix(col_matrix_2);
+
+// }
 
