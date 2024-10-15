@@ -205,60 +205,61 @@ void* matrix_init (int rows, int cols, enum orientation orient, enum data_type d
         void* neg_dim = NULL;
         return neg_dim;
     }
-
-    //initialize a header array
-    if(orient == ROW) {
-        
-        //instantiate new matrix object, with a pointer to it
-        struct matrix* new_matrix = (struct matrix*)malloc(sizeof(struct matrix)*1);
-        new_matrix->rows = rows;
-        new_matrix->columns = cols;
-        new_matrix->orient = orient;
-        new_matrix->data_type = data_type;
-
-        //allocate memory for block of dynamic arrays and for the union arrays inside them
-        new_matrix->matrix_data = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*rows);
-        new_matrix->matrix_data->capacity = rows;
-        for(int x = 0; x < new_matrix->matrix_data->capacity; x++) {
-
-            new_matrix->matrix_data[x].values = (union data_val*)malloc(sizeof(union data_val)*cols);
-            new_matrix->matrix_data[x].capacity = cols;
-            new_matrix->matrix_data[x].size = 0;
-            new_matrix->matrix_data->size += 1;
-
-        }
-
-        //sets all matrix indexes to NO_VALUE variables.
-        devalue_matrix(new_matrix);
-        return new_matrix;
-
-    }
     else {
+        //initialize a header array
+        if(orient == ROW) {
+            
+            //instantiate new matrix object, with a pointer to it
+            struct matrix* new_matrix = (struct matrix*)malloc(sizeof(struct matrix)*1);
+            new_matrix->rows = rows;
+            new_matrix->columns = cols;
+            new_matrix->orient = orient;
+            new_matrix->data_type = data_type;
 
-        //instantiate new matrix object, with a pointer to it
-        struct matrix* new_matrix = (struct matrix*)malloc(sizeof(struct matrix)*1);
-        new_matrix->rows = rows;
-        new_matrix->columns = cols;
-        new_matrix->orient = orient;
-        new_matrix->data_type = data_type;
+            //allocate memory for block of dynamic arrays and for the union arrays inside them
+            new_matrix->matrix_data = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*rows);
+            new_matrix->matrix_data->capacity = rows;
+            for(int x = 0; x < rows; x++) {
 
-        //allocate memory for block of dynamic arrays and for the union arrays inside them
-        new_matrix->matrix_data = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*cols);
-        new_matrix->matrix_data->capacity = cols;
-        for(int x = 0; x < new_matrix->matrix_data->capacity; x++) {
+                new_matrix->matrix_data[x].values = (union data_val*)malloc(sizeof(union data_val)*cols);
+                new_matrix->matrix_data[x].capacity = cols;
+                new_matrix->matrix_data[x].size = 0;
+                new_matrix->matrix_data->size += 1;
 
-            new_matrix->matrix_data[x].values = (union data_val*)malloc(sizeof(union data_val)*rows);
-            new_matrix->matrix_data[x].capacity = rows;
-            new_matrix->matrix_data[x].size = 0;
+            }
 
-            new_matrix->matrix_data->size += 1;
+            //sets all matrix indexes to NO_VALUE variables.
+            devalue_matrix(new_matrix);
+            return new_matrix;
+
         }
+        else {
 
-        return new_matrix;
+            //instantiate new matrix object, with a pointer to it
+            struct matrix* new_matrix = (struct matrix*)malloc(sizeof(struct matrix)*1);
+            new_matrix->rows = rows;
+            new_matrix->columns = cols;
+            new_matrix->orient = orient;
+            new_matrix->data_type = data_type;
 
+            //allocate memory for block of dynamic arrays and for the union arrays inside them
+            new_matrix->matrix_data = (struct dynamic_array*)malloc(sizeof(struct dynamic_array)*cols);
+            new_matrix->matrix_data->capacity = cols;
+
+            for(int x = 0; x < cols; x++) {
+
+                new_matrix->matrix_data[x].values = (union data_val*)malloc(sizeof(union data_val)*rows);
+                new_matrix->matrix_data[x].capacity = rows;
+                new_matrix->matrix_data[x].size = 0;
+
+                new_matrix->matrix_data->size += 1;
+            }
+
+            //sets all matrix indexes to NO_VALUE variables.
+            devalue_matrix(new_matrix);
+            return new_matrix;
+        }
     }
-
-    
 }
 
 
@@ -363,7 +364,7 @@ int set_element(struct matrix* matrix_in, int row, int column, union data_val el
         return -1;
     }
     //error handling: checking that the user-given coordinates are within the bounds of the matrix.
-    else if(row < 0 || row > matrix_in->rows || row < 0 || column < 0 || column > matrix_in->columns) {
+    else if(row < 0 || row > matrix_in->rows || column < 0 || column > matrix_in->columns) {
         printf("Error: coordinates provided do not exist within the matrix.\n");
         return -1;
     }
@@ -376,17 +377,17 @@ int set_element(struct matrix* matrix_in, int row, int column, union data_val el
             switch (matrix_in->data_type) {
                 case INT:
 
-                    matrix_in->matrix_data[row].values[column] = elem_to_set;
+                    matrix_in->matrix_data[row].values[column].itgr = elem_to_set.itgr;
                     break;
 
                 case FLOAT:
 
-                    matrix_in->matrix_data[row].values[column] = elem_to_set;
+                    matrix_in->matrix_data[row].values[column].flt = elem_to_set.flt;
                     break;
 
                 case DOUBLE:
                 
-                    matrix_in->matrix_data[row].values[column] = elem_to_set;
+                    matrix_in->matrix_data[row].values[column].dbl = elem_to_set.dbl;
                     break;
             }
 
@@ -399,17 +400,17 @@ int set_element(struct matrix* matrix_in, int row, int column, union data_val el
             switch (matrix_in->data_type) {
                 case INT:
 
-                    matrix_in->matrix_data[column].values[row] = elem_to_set;
+                    matrix_in->matrix_data[column].values[row].itgr = elem_to_set.itgr;
                     break;
 
                 case FLOAT:
 
-                    matrix_in->matrix_data[column].values[row] = elem_to_set;
+                    matrix_in->matrix_data[column].values[row].flt = elem_to_set.flt;
                     break;
 
                 case DOUBLE:
                 
-                    matrix_in->matrix_data[column].values[row] = elem_to_set;
+                    matrix_in->matrix_data[column].values[row].dbl = elem_to_set.dbl;
                     break;
             }
 
@@ -1064,6 +1065,8 @@ void* add_matrices(struct matrix* matrix_1, struct matrix* matrix_2) {
         else {
 
             struct matrix* sum_matrix = matrix_init(matrix_1->rows, matrix_1->columns, matrix_1->orient, matrix_1->data_type);
+            //add check for NULL pointer after matrix init.
+
 
             //iterate through each index of the matrix
             for(int i = 0; i < matrix_1->rows; i++) {
@@ -1117,7 +1120,7 @@ void* subtract_matrices(struct matrix* matrix_1, struct matrix* matrix_2) {
     //error handling: do both matrices exist?
     if(matrix_1 == NULL || matrix_2 == NULL) {
         printf("Error: at least one matrix does not exist.");
-        void* null_ptr = NULL;
+        void* null_ptr = NULL; // just return null instead of creating another variable
         return null_ptr;
     }
     //error handling: are both matrices the same dimensions?
@@ -1450,9 +1453,99 @@ void* duplicate_matrix(struct matrix* matrix_in) {
 */
 void* create_subset(struct matrix* matrix_in, int subset_rows, int subset_columns, int row_point, int col_point) {
     //error handling
-
+    if(matrix_in == NULL) {
+        printf("Error: the input matrix does not exist.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    } else if(subset_rows > matrix_in->rows || subset_rows < 0 || subset_columns > matrix_in->columns || subset_columns < 0) {
+        printf("Error: the requested subset dimensions are partially or fully out of bounds. please try again.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
+    else if(col_point + (subset_columns - 1) > matrix_in->columns) {
+        printf("Error: the requested subset dimensions are partially or fully out of bounds. please try again.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    } else if(row_point + (subset_rows - 1) > matrix_in->rows) {
+        printf("Error: the requested subset dimensions are partially or fully out of bounds. please try again.");
+        void* null_ptr = NULL;
+        return null_ptr;
+    }
     //if passed error handling, create new matrix using the input dimensions: ss rows/cols
+    else {
 
+        if(matrix_in->orient == ROW) {
+
+            struct matrix* subset_matrix = matrix_init(subset_rows, subset_columns, matrix_in->orient, matrix_in->data_type);
+
+            for(int x = 0; x < subset_matrix->rows; x++) {
+
+                for(int y = 0; x < subset_matrix->columns; y++) {
+
+                    switch(subset_matrix->data_type) {
+
+                        case INT:
+
+                            subset_matrix->matrix_data[x].values[y].itgr = matrix_in->matrix_data[row_point + x].values[col_point + y].itgr;
+                            subset_matrix->matrix_data[x].size++;
+                            break;
+
+                        case FLOAT:
+
+                            subset_matrix->matrix_data[x].values[y].flt = matrix_in->matrix_data[row_point + x].values[col_point + y].flt;
+                            subset_matrix->matrix_data[x].size++;
+                            break;
+
+                        case DOUBLE:
+
+                            subset_matrix->matrix_data[x].values[y].dbl = matrix_in->matrix_data[row_point + x].values[col_point + y].dbl;
+                            subset_matrix->matrix_data[x].size++;
+                            break;
+
+                    }
+
+                }
+
+            }
+            return subset_matrix;
+        }
+        else {
+
+            struct matrix* subset_matrix = matrix_init(subset_rows, subset_columns, matrix_in->orient, matrix_in->data_type);
+
+            for(int x = 0; x < subset_matrix->columns; x++) {
+
+                for(int y = 0; x < subset_matrix->rows; y++) {
+
+                    switch(subset_matrix->data_type) {
+
+                        case INT:
+
+                            subset_matrix->matrix_data[x].values[y].itgr = matrix_in->matrix_data[row_point + x].values[col_point + y].itgr;
+                            subset_matrix->matrix_data[x].size++;
+                            break;
+
+                        case FLOAT:
+
+                            subset_matrix->matrix_data[x].values[y].flt = matrix_in->matrix_data[row_point + x].values[col_point + y].flt;
+                            subset_matrix->matrix_data[x].size++;
+                            break;
+
+                        case DOUBLE:
+
+                            subset_matrix->matrix_data[x].values[y].dbl = matrix_in->matrix_data[row_point + x].values[col_point + y].dbl;
+                            subset_matrix->matrix_data[x].size++;
+                            break;
+
+                    }
+
+                }
+
+            }
+            return subset_matrix;
+        }
+
+    }
     //starting at row/col point, iterate through matrix until bounds of subset are reached
         //adding the value at each index to the new subset matrix
 
@@ -1461,13 +1554,230 @@ void* create_subset(struct matrix* matrix_in, int subset_rows, int subset_column
 }
 
 
+/**
+ * 
+ * @brief set a subset of a matrix, utilizing another matrix of matching dimensions, data_type, and orientation.
+ * 
+ * @param matrix_to_set pointer to the matrix struct that the subset will be set to.
+ * @param subset_matrix pointer to the matrix struct that will be set to the other matrix.
+ * @param row_point upper-left-most row of matrix_to_set, that subset_matrix will be set to.
+ * @param col_point upper-left-most column of matrix_to_set, that subset_matrix will be set to.
+ * 
+ * @return if succesful, returns 1.
+ * @return if unsuccessful, returns -1.
+ * 
+*/
+int set_subset_to_matrix(struct matrix* matrix_to_set, struct matrix* subset_matrix, int row_point, int col_point) {
+    //Error handling: do matrices exist?
+    if(matrix_to_set == NULL || subset_matrix == NULL) {
+        printf("Error: at least one matrix does not exist.");
+        return -1;
+    }
+    //Error handling: are matrices the same orientation?
+    else if(matrix_to_set->orient != subset_matrix->orient) {
+        printf("Error: matrices are not the same orientation.");
+        return -1;
+    }
+    //error handling: are matrices the same data type?
+    else if(matrix_to_set->data_type != subset_matrix->data_type) {
+        printf("Error: matrices are not the same data type.");
+        return -1;
+    }
+    //Error handling: are subset_matrix dimensions less than or equal to set_matrix's dimensions?
+    else if(subset_matrix->rows > matrix_to_set->rows || subset_matrix->columns > matrix_to_set->columns) {
+        printf("Error: the subset matrix is larger than the matrix it is being set to.");
+        return -1;
+    }
+    //Error handling: checking if subset_matrix, when starting at the desired set index, will still fit within matrix_to_set.
+    else if((row_point + subset_matrix->rows) > matrix_to_set->rows || (col_point + subset_matrix->columns) > matrix_to_set->columns) {
+        printf("Error: trying to set to the matrix at the desired starting point goes out of bounds");
+        return -1;
+    }
+    else {
+        
+        if(matrix_to_set->orient == ROW) {
+
+            for(int x = 0; x < subset_matrix->rows; x++) {
+
+                for(int y = 0; y < subset_matrix->columns; y++) {
+
+                    switch(matrix_to_set->data_type) {
+
+                        case INT:
+
+                            matrix_to_set->matrix_data[row_point + x].values[col_point + y].itgr = subset_matrix->matrix_data[x].values[y].itgr;
+                            break;
+
+                        case FLOAT:
+
+                            matrix_to_set->matrix_data[row_point + x].values[col_point + y].flt = subset_matrix->matrix_data[x].values[y].flt;
+                            break;
+
+                        case DOUBLE:
+                        
+                            matrix_to_set->matrix_data[row_point + x].values[col_point + y].dbl = subset_matrix->matrix_data[x].values[y].dbl;
+                            break;
+                    }
+                }
+            }
+            return 1;
+        }
+        else {
+
+            for(int x = 0; x < subset_matrix->columns; x++) {
+
+                for(int y = 0; y < subset_matrix->rows; y++) {
+
+                    switch(matrix_to_set->data_type) {
+
+                        case INT:
+
+                            matrix_to_set->matrix_data[col_point + x].values[row_point + y].itgr = subset_matrix->matrix_data[x].values[y].itgr;
+                            break;
+
+                        case FLOAT:
+
+                            matrix_to_set->matrix_data[col_point + x].values[row_point + y].flt = subset_matrix->matrix_data[x].values[y].flt;
+                            break;
+
+                        case DOUBLE:
+                        
+                            matrix_to_set->matrix_data[col_point + x].values[row_point + y].dbl = subset_matrix->matrix_data[x].values[y].dbl;
+                            break;
+                    }
+                }
+            }
+            return 1;
+        }
+    }
+}
 
 
-    //not sure what return type to do for this one
-// int set_subset_to_matrix();
+/**
+ * 
+ * @brief will resize a given matrix to the given dimensions. 
+ * 
+ * @param matrix_in pointer to a matrix struct.
+ * @param new_rows the amount of rows the resized matrix will have.
+ * @param new_columns the amount of columns the resized matrix will have.
+ * 
+ * @return if successful, will return a pointer to the resized matrix.
+ * @return if failed, will return a NULL pointer.
+ * 
+*/
+void* resize_matrix(struct matrix* matrix_in, int new_rows, int new_columns) {
+    if(matrix_in == NULL) {
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        void* neg_dim = NULL;
+        return neg_dim;
+    }
+    else if(new_rows < 0 || new_columns < 0) {
+        printf("Error: negative numbers are not valid matrix dimensions. please try again.\n");
+        void* neg_dim = NULL;
+        return neg_dim;
+    }
+    else if(new_rows == matrix_in->rows && new_columns == matrix_in->columns) {
+        printf("The input matrix dimensions and the resize dimensions are the same. this function does not need to be run.\n");
+        void* neg_dim = NULL;
+        return neg_dim;
+    }
+    else {
+        //create the resized matrix
+        struct matrix* resized_matrix = matrix_init(new_rows, new_columns, matrix_in->orient, matrix_in->data_type);
 
-// void* resize_matrix();
 
+        // these variables will determine the rows and columns that are searched through when copying over elements to the resized matrix.
+        int s_rows;
+        int s_cols;
+        //compare rows, pick smaller and store in s_rows
+        if (matrix_in->rows < resized_matrix->rows) {
+            s_rows = matrix_in->rows;
+        }
+        else {
+            s_rows = resized_matrix->rows;
+        }
+        //compare columns, pick smaller and store in s_rows
+        if (matrix_in->columns < resized_matrix->columns) {
+            s_cols = matrix_in->columns;
+        }
+        else {
+            s_cols = resized_matrix->columns;
+        }
+
+
+        if(resized_matrix->orient == ROW) {
+
+            //iterate through resized matrix, adding the element at that index to the resized matrix from the original matrix.
+            for(int i = 0; i < s_rows; i++) {
+
+                for(int j = 0; j < s_cols; j++) {
+
+                    switch(resized_matrix->data_type) {
+
+                        case INT:
+
+                            resized_matrix->matrix_data[i].values[j].itgr = matrix_in->matrix_data[i].values[j].itgr;
+                            break;
+
+                        case FLOAT:
+
+                            resized_matrix->matrix_data[i].values[j].flt = matrix_in->matrix_data[i].values[j].flt;
+                            break;
+
+                        case DOUBLE:
+
+                            resized_matrix->matrix_data[i].values[j].dbl = matrix_in->matrix_data[i].values[j].dbl;
+                            break;
+
+                    }
+
+                }
+
+            }
+
+            //free original matrix and return the resized matrix
+            free_matrix(matrix_in);
+            return resized_matrix;
+
+        }
+        else {
+
+            //iterate through resized matrix, adding the element at that index to the resized matrix from the original matrix.
+            for(int i = 0; i < s_cols; i++) {
+
+                for(int j = 0; j < s_rows; j++) {
+
+                    switch(resized_matrix->data_type) {
+
+                        case INT:
+
+                            resized_matrix->matrix_data[i].values[j].itgr = matrix_in->matrix_data[i].values[j].itgr;
+                            break;
+
+                        case FLOAT:
+
+                            resized_matrix->matrix_data[i].values[j].flt = matrix_in->matrix_data[i].values[j].flt;
+                            break;
+
+                        case DOUBLE:
+
+                            resized_matrix->matrix_data[i].values[j].dbl = matrix_in->matrix_data[i].values[j].dbl;
+                            break;
+
+                    }
+
+                }
+
+            }
+            //free original matrix and return the resized matrix
+            free_matrix(matrix_in);
+            return resized_matrix;
+        }
+
+    }
+
+}
+      
 
 /**
  * 
@@ -1483,8 +1793,7 @@ void* create_subset(struct matrix* matrix_in, int subset_rows, int subset_column
 int compare_instance(struct matrix* matrix_1, struct matrix* matrix_2) {
     if(matrix_1 == NULL || matrix_2 == NULL) {
         printf("Error: at least one matrix does not exist.");
-        void* null_ptr = NULL;
-        return null_ptr;
+        return -1;
     }
     else {
         if(&matrix_1 == &matrix_2) {
@@ -1512,26 +1821,22 @@ int compare_contents(struct matrix* matrix_1, struct matrix* matrix_2) {
     //error handling: do both matrices exist?
     if(matrix_1 == NULL || matrix_2 == NULL) {
         printf("Error: at least one matrix does not exist.");
-        void* null_ptr = NULL;
-        return null_ptr;
+        return -1;
     }
     //error handling: are both matrices the same dimensions?
     else if(matrix_1->rows != matrix_2->rows || matrix_1->columns != matrix_2->columns) {
         printf("Error: matrices are not the same size.");
-        void* null_ptr = NULL;
-        return null_ptr;
+        return -1;
     }
     //error handling: are both matrices the same orientation?
     else if(matrix_1->orient != matrix_2->orient) {
         printf("Error: matrices are not the same orientation.");
-        void* null_ptr = NULL;
-        return null_ptr;
+        return -1;
     }
     //error handling: are both matrices the same data type?
     else if(matrix_1->data_type != matrix_2->data_type) {
         printf("Error: matrices are not the same data type.");
-        void* null_ptr = NULL;
-        return null_ptr;
+        return -1;
     }
     //if error handling is passed then function continues as expected
     else {
@@ -1632,8 +1937,103 @@ int compare_contents(struct matrix* matrix_1, struct matrix* matrix_2) {
 }
 
 
+/**
+ * 
+ * @brief will rotate a matrix 90 degrees clockwise (ie: a 3 row 2 column matrix will now be a 2 row 3 column matrix).
+ * @brief elements inside the matrix retain their relative location within the matrix.
+ * 
+ * @param matrix_in pointer to a matrix struct.
+ * 
+ * @return if successful, returns a pointer to the roatated matrix.
+ * @return if failed, returns a NULL pointer.
+ * 
+*/
+void* rotate_matrix(struct matrix* matrix_in) {
 
+    //error handling: does matrix_in exist?
+    if(matrix_in == NULL) {
+        printf("Error: matrix does not exist. please create a matrix and try again.\n");
+        void* neg_dim = NULL;
+        return neg_dim;
+    }
+    else {
 
+        if(matrix_in->orient == ROW) {
+            //create a matrix with the rows and columns swapped
+            struct matrix* rotated_matrix = matrix_init(matrix_in->columns, matrix_in->rows, matrix_in->orient, matrix_in->data_type);
+
+            for(int x = 0; x < rotated_matrix->rows; x++) {
+                int n = 1;
+                for(int y = 0; y < rotated_matrix->columns; y++) {
+
+                    //when a matrix is rotated, the rows can be traversed normally (increasing order), but the columns must be traversed in reverse order to make sure 
+                    //the elements retain their relative position within the matrix.
+                    if(rotated_matrix->columns - n >= 0) {
+                        switch(rotated_matrix->data_type) {
+
+                            case INT:
+
+                                rotated_matrix->matrix_data[x].values[rotated_matrix->columns - n].itgr = matrix_in->matrix_data[y].values[x].itgr;
+                                break;
+
+                            case FLOAT:
+
+                                rotated_matrix->matrix_data[x].values[rotated_matrix->columns - n].flt = matrix_in->matrix_data[y].values[x].flt; 
+                                break;
+
+                            case DOUBLE:
+
+                                rotated_matrix->matrix_data[x].values[rotated_matrix->columns - n].dbl = matrix_in->matrix_data[y].values[x].dbl;
+                                break;
+                        }
+                    }
+                }
+            }
+            //free matrix_in before returning
+            free_matrix(matrix_in);
+            return rotated_matrix;
+        }
+        else {
+            
+            //create a matrix with the rows and columns swapped
+            struct matrix* rotated_matrix = matrix_init(matrix_in->columns, matrix_in->rows, matrix_in->orient, matrix_in->data_type);
+
+            //iterate through the new matrix and add the elements from matrix_in to the new matrix in their relative position within the matrix.
+            for(int x = 0; x < rotated_matrix->rows; x++) {
+                int n = 1;
+                for(int y = 0; y < rotated_matrix->columns; y++) {
+
+                    //when a matrix is rotated, the rows can be traversed normally (increasing order), but the columns must be traversed in reverse order to make sure 
+                    //the elements retain their relative position within the matrix.
+                    if(rotated_matrix->columns - n >= 0) {
+                        switch(rotated_matrix->data_type) {
+
+                            case INT:
+
+                                rotated_matrix->matrix_data[x].values[rotated_matrix->columns - n].itgr = matrix_in->matrix_data[y].values[x].itgr;
+                                break;
+
+                            case FLOAT:
+
+                                rotated_matrix->matrix_data[x].values[rotated_matrix->columns - n].flt = matrix_in->matrix_data[y].values[x].flt; 
+                                break;
+
+                            case DOUBLE:
+
+                                rotated_matrix->matrix_data[x].values[rotated_matrix->columns - n].dbl = matrix_in->matrix_data[y].values[x].dbl;
+                                break;
+                        }
+                    }
+                }
+            }
+            //free matrix_in before returning
+            free_matrix(matrix_in);
+            return rotated_matrix;
+        }
+    }
+}
+
+/*
 // int main() {
 
     //setting variables up
@@ -1696,4 +2096,4 @@ int compare_contents(struct matrix* matrix_1, struct matrix* matrix_2) {
     // free_matrix(col_matrix_2);
 
 // }
-
+*/

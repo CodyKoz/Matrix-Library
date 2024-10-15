@@ -44,14 +44,49 @@ void test_get_columns(struct matrix* matrix_in, int expected) {
     }
 }
 
-void test_set_element(struct matrix* matrix_in, int row, int column, int elem_to_set, int expected) {
-    int result = set_element(matrix_in, row, column, elem_to_set);
-    if(result != expected) {
-        printf(" !!! Test fail: set_element(%p,%d,%d,%d) = %d. expected: %d\n", matrix_in, row, column, elem_to_set, result, expected);
+void test_set_element(struct matrix* matrix_in, int row, int column, union data_val elem_to_set, int expected) {
+    union data_val elem_in;
+    switch(matrix_in->data_type) {
+        case INT:
+            elem_in.itgr = elem_to_set.itgr;
+            break;
+        case FLOAT:
+            elem_in.dbl = elem_to_set.flt;
+            break;
+        case DOUBLE:
+            elem_in.dbl = elem_to_set.dbl;
+            break;
     }
-    else {
-        printf("Test pass: set_element(%p,%d,%d,%d) = %d. expected: %d\n", matrix_in, row, column, elem_to_set, result, expected);
+
+    int result = set_element(matrix_in, row, column, elem_in);
+
+    switch(matrix_in->data_type) {
+        case INT:
+            if(result != expected) {
+                printf(" !!! Test fail: set_element(%p,%d,%d,%d) = %d. expected: %d\n", matrix_in, row, column, elem_to_set.itgr, result, expected);
+                }
+                else {
+                    printf("Test pass: set_element(%p,%d,%d,%d) = %d. expected: %d\n", matrix_in, row, column, elem_to_set.itgr, result, expected);
+                }
+                break;
+        case FLOAT:
+            if(result != expected) {
+                printf(" !!! Test fail: set_element(%p,%d,%d,%f) = %d. expected: %d\n", matrix_in, row, column, elem_to_set.flt, result, expected);
+                }
+                else {
+                    printf("Test pass: set_element(%p,%d,%d,%f) = %d. expected: %d\n", matrix_in, row, column, elem_to_set.flt, result, expected);
+                }
+                break;
+        case DOUBLE:
+            if(result != expected) {
+                printf(" !!! Test fail: set_element(%p,%d,%d,%.3f) = %d. expected: %d\n", matrix_in, row, column, elem_to_set.dbl, result, expected);
+                }
+                else {
+                    printf("Test pass: set_element(%p,%d,%d,%.3f) = %d. expected: %d\n", matrix_in, row, column, elem_to_set.dbl, result, expected);
+                }
+                break;
     }
+    
 }
 
 void test_print_element(struct matrix* matrix_in, int row, int column, union data_val expected) {
@@ -159,6 +194,76 @@ void test_multiply_matrices(struct matrix* matrix_1, struct matrix* matrix_2) {
     }
 }
 
+void test_duplicate_matrix(struct matrix* matrix_in) {
+    void* result = duplicate_matrix(matrix_in);
+    if (result == NULL) {
+        printf(" !!! Test fail: duplicate_matrix(%p) = %p, expected: non-Null pointer\n", matrix_in, result);
+    }
+    else {
+        printf("Test pass: duplicate_matrix(%p) = %p. expected: non-Null pointer\n", matrix_in, result);
+    }
+}
+
+void test_create_subset(struct matrix* matrix_in) {
+    void* result = create_subset(matrix_in);
+    if (result == NULL) {
+        printf(" !!! Test fail: create_subset(%p) = %p, expected: non-Null pointer\n", matrix_in, result);
+    }
+    else {
+        printf("Test pass: create_subset(%p) = %p. expected: non-Null pointer\n", matrix_in, result);
+    }
+}
+
+void test_set_subset_to_matrix(struct matrix* matrix_to_set, struct matrix* subset_matrix, int row_point, int col_point, int expected) {
+    int result = set_subset_to_matrix(matrix_to_set, subset_matrix, row_point, col_point);
+    if (result == -1) {
+        printf(" !!! Test fail: set_subset_to_matrix(%p,%p,%d,%d) = %d. expected: %d\n", matrix_to_set, subset_matrix, row_point, col_point, result, expected);
+    }
+    else {
+        printf("Test pass: set_subset_to_matrix(%p,%p,%d,%d) = %d. expected: %d\n", matrix_to_set, subset_matrix, row_point, col_point, result, expected);
+    }
+}
+
+void test_resize_matrix(struct matrix* matrix_in, int new_rows, int new_columns) {
+    void* result = resize_matrix(matrix_in);
+    if (result == NULL) {
+        printf(" !!! Test fail: resize_matrix(%p) = %p, expected: non-Null pointer\n", matrix_in, result);
+    }
+    else {
+        printf("Test pass: resize_matrix(%p) = %p. expected: non-Null pointer\n", matrix_in, result);
+    }
+}
+
+void test_compare_instance(struct matrix* matrix_1, struct matrix* matrix_2, int expected) {
+    int result = compare_instance(matrix_1, matrix_2);
+    if (result == -1) {
+        printf(" !!! Test fail: compare_instance(%p,%p) = %d. expected: %d\n", matrix_1, matrix_2, result, expected);
+    }
+    else {
+        printf("Test pass: compare_instance(%p,%p) = %d. expected: %d\n", matrix_1, matrix_2, result, expected);
+    }
+}
+
+void test_compare_contents(struct matrix* matrix_1, struct matrix* matrix_2, int expected) {
+    int result = compare_contents(matrix_1, matrix_2);
+    if (result == -1) {
+        printf(" !!! Test fail: compare_contents(%p,%p) = %d. expected: %d\n", matrix_1, matrix_2, result, expected);
+    }
+    else {
+        printf("Test pass: compare_contents(%p,%p) = %d. expected: %d\n", matrix_1, matrix_2, result, expected);
+    }
+}
+
+void test_rotate_matrix(struct matrix* matrix_in) {
+    void* result = rotate_matrix(matrix_in);
+    if (result == NULL) {
+        printf(" !!! Test fail: rotate_matrix(%p) = %p, expected: non-Null pointer\n", matrix_in, result);
+    }
+    else {
+        printf("Test pass: rotate_matrix(%p) = %p. expected: non-Null pointer\n", matrix_in, result);
+    }
+}
+
 
 int main () {
     enum orientation orient_row = ROW;
@@ -171,181 +276,169 @@ int main () {
     printf("///     Integer Matrix Testing\n");    
     printf("///----------------------------------------------------------------------------\n\n");
 
-    struct matrix* matrix_row_int_1 = matrix_init(2,2,orient_row, dt_int);
-    test_matrix_init(matrix_row_int_1);
-    struct matrix* matrix_row_int_2 = matrix_init(10,10,orient_row, dt_int);
-    test_matrix_init(matrix_row_int_2);
-    struct matrix* matrix_row_int_3 = matrix_init(20,40,orient_row, dt_int);
-    test_matrix_init(matrix_row_int_3);
-    struct matrix* matrix_row_int_4 = matrix_init(100,150,orient_row, dt_int);
-    test_matrix_init(matrix_row_int_4);
-    struct matrix* matrix_row_int_5 = matrix_init(2,2,orient_row, dt_int);
-    test_matrix_init(matrix_row_int_5);
-   
-    struct matrix* matrix_col_int_1 = matrix_init(2,2,orient_col, dt_int);
-    test_matrix_init(matrix_col_int_1);
-    struct matrix* matrix_col_int_2 = matrix_init(10,10,orient_col, dt_int);
-    test_matrix_init(matrix_col_int_2);
-    struct matrix* matrix_col_int_3 = matrix_init(20,40,orient_col, dt_int);
-    test_matrix_init(matrix_col_int_3);
-    struct matrix* matrix_col_int_4 = matrix_init(100,150,orient_col, dt_int);
-    test_matrix_init(matrix_col_int_4);
-    struct matrix* matrix_col_int_5 = matrix_init(2,2,orient_col, dt_int);
-    test_matrix_init(matrix_col_int_5);
+    struct matrix* row_int_1 = matrix_init(3, 3, orient_row, dt_int);
+    test_matrix_init(row_int_1);
+    struct matrix* row_int_2 = matrix_init(5, 4, orient_row, dt_int);
+    test_matrix_init(row_int_2);
+    struct matrix* row_int_3 = matrix_init(5, 4, orient_row, dt_int);
+    test_matrix_init(row_int_3);
+    struct matrix* row_int_4 = matrix_init(10, 10, orient_row, dt_int);
+    test_matrix_init(row_int_4);
+
+    struct matrix* col_int_1 = matrix_init(3, 3, orient_col, dt_int);
+    test_matrix_init(col_int_1);
+    struct matrix* col_int_2 = matrix_init(5, 4, orient_col, dt_int);
+    test_matrix_init(col_int_2);
+    struct matrix* col_int_3 = matrix_init(5, 4, orient_col, dt_int);
+    test_matrix_init(col_int_3);
+    struct matrix* col_int_4 = matrix_init(10, 10, orient_col, dt_int);
+    test_matrix_init(col_int_4);
 
     printf("\n");
 
-    //returns actual value of rows/cols
-    test_get_rows(matrix_row_int_1, 2);
-    test_get_rows(matrix_row_int_3, 20);
-    test_get_rows(matrix_col_int_2, 10);
-    test_get_rows(matrix_col_int_4, 100);
+    test_get_rows(row_int_1, 3);
+    test_get_rows(col_int_4, 10);
 
     printf("\n");
 
-    test_get_columns(matrix_row_int_2, 10);
-    test_get_columns(matrix_row_int_4, 150);
-    test_get_columns(matrix_col_int_1, 2);
-    test_get_columns(matrix_col_int_3, 40);
+    test_get_columns(col_int_2, 4);
+    test_get_columns(row_int_4, 10);
 
     printf("\n");
-
-    //test set/get single element
-    test_set_element(matrix_row_int_1, 1, 0, 5, 1);
-    test_set_element(matrix_row_int_4, 90, 137, 17, 1);
-    
-    test_set_element(matrix_col_int_2, 2, 8, -500, 1);
-    test_set_element(matrix_col_int_3, 20, 10, 80000, 1);   
+    union data_val elem_to_set;
+    elem_to_set.itgr = 1;
+    test_set_element(row_int_2, 3, 3, elem_to_set, 1);
+    elem_to_set.itgr = -30;
+    // test_set_element(col_int_3, 5, 4, elem_to_set, 1); ///
+    // elem_to_set.itgr = 10;
+    test_set_element(col_int_4, -5, 3, elem_to_set, -1); // testing error handling
 
     printf("\n");
 
     union data_val expected_elem;
-    expected_elem.itgr = 5;
-    test_print_element(matrix_row_int_1, 1, 0, expected_elem);
-    expected_elem.itgr = 17;
-    test_print_element(matrix_row_int_4, 90, 137, expected_elem);
-    expected_elem.itgr = -500;
-    test_print_element(matrix_col_int_2, 2, 8, expected_elem);
-    expected_elem.itgr = 80000;
-    test_print_element(matrix_col_int_3, 20, 10, expected_elem);
+    expected_elem.itgr = 1;
+    test_print_element(row_int_2, 3, 3, expected_elem);
+    expected_elem.itgr = -30;
+    test_print_element(col_int_3, 5, 4, expected_elem);
 
     printf("\n");
 
+    // union data_val expected_elem;
+    // expected_elem.itgr = NO_VAL_INT;
+    
+
+    printf("\n");
+
+    // union data_val int1, int2, int3, int4, int5, int6, int7, int8, int9, int10;
+    // int1.itgr = 1;
+    // int2.itgr = 10;
+    // int3.itgr = 37;
+    // int4.itgr = -56;
+    // int5.itgr = 80;
+    // int6.itgr = 151;
+    // int7.itgr = -349;
+    // int8.itgr = 1000;
+    // int9.itgr = 2673;
+    // int10.itgr = -12000;
+
+    // union data_val int_arr1[] = {int1, int2};
+    // union data_val int_arr2[] = {int2, int3, int4, int5};
+    // union data_val int_arr3[] = {int6, int7, int8, int9, int10};
 
 
     printf("\n///----------------------------------------------------------------------------\n");
     printf("///     Float Matrix Testing\n");    
     printf("///----------------------------------------------------------------------------\n\n");
 
-    struct matrix* matrix_row_flt_1 = matrix_init(2,2,orient_row, dt_flt);
-    test_matrix_init(matrix_row_flt_1);
-    struct matrix* matrix_row_flt_2 = matrix_init(10,10,orient_row, dt_flt);
-    test_matrix_init(matrix_row_flt_2);
-    struct matrix* matrix_row_flt_3 = matrix_init(20,40,orient_row, dt_flt);
-    test_matrix_init(matrix_row_flt_3);
-    struct matrix* matrix_row_flt_4 = matrix_init(100,150,orient_row, dt_flt);
-    test_matrix_init(matrix_row_flt_4);
-   
-    struct matrix* matrix_col_flt_1 = matrix_init(2,2,orient_col, dt_flt);
-    test_matrix_init(matrix_col_flt_1);
-    struct matrix* matrix_col_flt_2 = matrix_init(10,10,orient_col, dt_flt);
-    test_matrix_init(matrix_col_flt_2);
-    struct matrix* matrix_col_flt_3 = matrix_init(20,40,orient_col, dt_flt);
-    test_matrix_init(matrix_col_flt_3);
-    struct matrix* matrix_col_flt_4 = matrix_init(100,150,orient_col, dt_flt);
-    test_matrix_init(matrix_col_flt_4);
+    struct matrix* row_flt_1 = matrix_init(3, 3, orient_row, dt_flt);
+    test_matrix_init(row_flt_1);
+    struct matrix* row_flt_2 = matrix_init(5, 4, orient_row, dt_flt);
+    test_matrix_init(row_flt_2);
+    struct matrix* row_flt_3 = matrix_init(5, 4, orient_row, dt_flt);
+    test_matrix_init(row_flt_3);
+    struct matrix* row_flt_4 = matrix_init(10, 10, orient_row, dt_flt);
+    test_matrix_init(row_flt_4);
+
+    struct matrix* col_flt_1 = matrix_init(3, 3, orient_col, dt_flt);
+    test_matrix_init(col_flt_1);
+    struct matrix* col_flt_2 = matrix_init(5, 4, orient_col, dt_flt);
+    test_matrix_init(col_flt_2);
+    struct matrix* col_flt_3 = matrix_init(5, 4, orient_col, dt_flt);
+    test_matrix_init(col_flt_3);
+    struct matrix* col_flt_4 = matrix_init(10, 10, orient_col, dt_flt);
+    test_matrix_init(col_flt_4);
 
     printf("\n");
 
     //returns actual value of rows/cols
-    test_get_rows(matrix_row_flt_1, 2);
-    test_get_rows(matrix_row_flt_3, 20);
-    test_get_rows(matrix_col_flt_2, 10);
-    test_get_rows(matrix_col_flt_4, 100);
-
-    test_get_columns(matrix_row_flt_2, 10);
-    test_get_columns(matrix_row_flt_4, 150);
-    test_get_columns(matrix_col_flt_1, 2);
-    test_get_columns(matrix_col_flt_3, 40);
+    
 
     printf("\n///----------------------------------------------------------------------------\n");
     printf("///     Double Matrix Testing\n");    
     printf("///----------------------------------------------------------------------------\n\n");
 
-    struct matrix* matrix_row_dbl_1 = matrix_init(2,2,orient_row, dt_dbl);
-    test_matrix_init(matrix_row_dbl_1);
-    struct matrix* matrix_row_dbl_2 = matrix_init(10,10,orient_row, dt_dbl);
-    test_matrix_init(matrix_row_dbl_2);
-    struct matrix* matrix_row_dbl_3 = matrix_init(20,40,orient_row, dt_dbl);
-    test_matrix_init(matrix_row_dbl_3);
-    struct matrix* matrix_row_dbl_4 = matrix_init(100,150,orient_row, dt_dbl);
-    test_matrix_init(matrix_row_dbl_4);
-   
-    struct matrix* matrix_col_dbl_1 = matrix_init(2,2,orient_col, dt_dbl);
-    test_matrix_init(matrix_col_dbl_1);
-    struct matrix* matrix_col_dbl_2 = matrix_init(10,10,orient_col, dt_dbl);
-    test_matrix_init(matrix_col_dbl_2);
-    struct matrix* matrix_col_dbl_3 = matrix_init(20,40,orient_col, dt_dbl);
-    test_matrix_init(matrix_col_dbl_3);
-    struct matrix* matrix_col_dbl_4 = matrix_init(100,150,orient_col, dt_dbl);
-    test_matrix_init(matrix_col_dbl_4);
+    struct matrix* row_dbl_1 = matrix_init(3, 3, orient_row, dt_dbl);
+    test_matrix_init(row_dbl_1);
+    struct matrix* row_dbl_2 = matrix_init(5, 4, orient_row, dt_dbl);
+    test_matrix_init(row_dbl_2);
+    struct matrix* row_dbl_3 = matrix_init(5, 4, orient_row, dt_dbl);
+    test_matrix_init(row_dbl_3);
+    struct matrix* row_dbl_4 = matrix_init(10, 10, orient_row, dt_dbl);
+    test_matrix_init(row_dbl_4);
+
+    struct matrix* col_dbl_1 = matrix_init(3, 3, orient_col, dt_dbl);
+    test_matrix_init(col_dbl_1);
+    struct matrix* col_dbl_2 = matrix_init(5, 4, orient_col, dt_dbl);
+    test_matrix_init(col_dbl_2);
+    struct matrix* col_dbl_3 = matrix_init(5, 4, orient_col, dt_dbl);
+    test_matrix_init(col_dbl_3);
+    struct matrix* col_dbl_4 = matrix_init(10, 10, orient_col, dt_dbl);
+    test_matrix_init(col_dbl_4);
 
     printf("\n");
 
     //returns actual value of rows/cols
-    test_get_rows(matrix_row_flt_1, 2);
-    test_get_rows(matrix_row_flt_3, 20);
-    test_get_rows(matrix_col_flt_2, 10);
-    test_get_rows(matrix_col_flt_4, 100);
-
-    test_get_columns(matrix_row_flt_2, 10);
-    test_get_columns(matrix_row_flt_4, 150);
-    test_get_columns(matrix_col_flt_1, 2);
-    test_get_columns(matrix_col_flt_3, 40);
+    
 
     printf("\n///----------------------------------------------------------------------------\n");
     printf("///     Freeing Matrix Memory\n");    
     printf("///----------------------------------------------------------------------------\n\n");
 
-    test_free_matrix(matrix_row_int_1, 1);
-    test_free_matrix(matrix_row_int_2, 1);
-    test_free_matrix(matrix_row_int_3, 1);
-    test_free_matrix(matrix_row_int_4, 1);
-
-    test_free_matrix(matrix_col_int_1, 1);
-    test_free_matrix(matrix_col_int_2, 1);
-    test_free_matrix(matrix_col_int_3, 1);
-    test_free_matrix(matrix_col_int_4, 1);
-
-
-    test_free_matrix(matrix_row_flt_1, 1);
-    test_free_matrix(matrix_row_flt_2, 1);
-    test_free_matrix(matrix_row_flt_3, 1);
-    test_free_matrix(matrix_row_flt_4, 1);
     
-    test_free_matrix(matrix_col_flt_1, 1);
-    test_free_matrix(matrix_col_flt_2, 1);
-    test_free_matrix(matrix_col_flt_3, 1);
-    test_free_matrix(matrix_col_flt_4, 1);
+    test_free_matrix(row_int_1, 1);
+    test_free_matrix(row_int_2, 1);
+    test_free_matrix(row_int_3, 1);
+    test_free_matrix(row_int_4, 1);
 
+    test_free_matrix(col_int_1, 1);
+    test_free_matrix(col_int_2, 1);
+    test_free_matrix(col_int_3, 1);
+    test_free_matrix(col_int_4, 1);
 
-    test_free_matrix(matrix_row_dbl_1, 1);
-    test_free_matrix(matrix_row_dbl_2, 1);
-    test_free_matrix(matrix_row_dbl_3, 1);
-    test_free_matrix(matrix_row_dbl_4, 1);
-    
-    test_free_matrix(matrix_col_dbl_1, 1);
-    test_free_matrix(matrix_col_dbl_2, 1);
-    test_free_matrix(matrix_col_dbl_3, 1);
-    test_free_matrix(matrix_col_dbl_4, 1);
+    printf("\n");
 
-    ///----------------------------------------------------------------------------
-    ///----------------------------------------------------------------------------
+    test_free_matrix(row_flt_1, 1);
+    test_free_matrix(row_flt_2, 1);
+    test_free_matrix(row_flt_3, 1);
+    test_free_matrix(row_flt_4, 1);
 
-    //union data_val print_test;
-    //print_test.itgr = 7;
-    //test_print_element(matrix_row, 0, 0, print_test);
+    test_free_matrix(col_flt_1, 1);
+    test_free_matrix(col_flt_2, 1);
+    test_free_matrix(col_flt_3, 1);
+    test_free_matrix(col_flt_4, 1);
 
-    
+    printf("\n");
+
+    test_free_matrix(row_dbl_1, 1);
+    test_free_matrix(row_dbl_2, 1);
+    test_free_matrix(row_dbl_3, 1);
+    test_free_matrix(row_dbl_4, 1);
+
+    test_free_matrix(col_dbl_1, 1);
+    test_free_matrix(col_dbl_2, 1);
+    test_free_matrix(col_dbl_3, 1);
+    test_free_matrix(col_dbl_4, 1);
+
+    printf("\n");
 
 }
